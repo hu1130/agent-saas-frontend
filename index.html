@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>深度觉醒 | AI 行业智能工作台</title>
+    <meta name="description" content="深度觉醒为企业提供 AI 行业解决方案，并打造律智AI、跨境智营、爆文工厂等行业产品。" />
+    <link rel="stylesheet" href="assets/ai-widget.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="cursor-aura" data-cursor-aura aria-hidden="true"></div>
+
+    <header class="nav">
+      <button class="brand" type="button" data-main-link>
+        <span class="brand-orbit" aria-hidden="true"></span>
+        <span>深度觉醒</span>
+      </button>
+      <nav class="nav-links" aria-label="主导航">
+        <button type="button" data-main-link data-scroll-target="solutions">企业方案</button>
+        <button type="button" data-main-link data-scroll-target="agents">智能体</button>
+        <div class="dropdown">
+          <button type="button">行业产品</button>
+          <div class="dropdown-menu">
+            <button type="button" data-detail="law">律智AI · 律师智能工作台</button>
+            <button type="button" data-detail="cross">跨境智营 · 出海AI增长引擎</button>
+            <button type="button" data-detail="media">爆文工厂 · 创作者AI中台</button>
+          </div>
+        </div>
+        <button type="button" data-main-link data-scroll-target="cases">客户案例</button>
+        <button type="button" data-main-link data-scroll-target="about">关于我们</button>
+      </nav>
+      <button class="nav-cta" type="button" data-open-modal>预约演示</button>
+      <button class="menu-button" type="button" data-menu-button aria-label="打开导航" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <nav class="mobile-nav" data-mobile-nav aria-label="移动导航">
+      <button type="button" data-main-link data-scroll-target="solutions">企业方案</button>
+      <button type="button" data-main-link data-scroll-target="agents">智能体</button>
+      <button type="button" data-main-link data-scroll-target="products">行业产品</button>
+      <button type="button" data-main-link data-scroll-target="cases">客户案例</button>
+      <button type="button" data-open-modal>预约演示</button>
+    </nav>
+
+    <aside class="side-rail" aria-label="侧边栏导航">
+      <span>智能体</span>
+      <button type="button" data-main-link data-scroll-target="agents">全部</button>
+      <button type="button" data-main-link data-scroll-target="agents" data-agent-key="doc">文书</button>
+      <button type="button" data-main-link data-scroll-target="agents" data-agent-key="risk">审查</button>
+      <button type="button" data-main-link data-scroll-target="agents" data-agent-key="service">客服</button>
+      <button type="button" data-main-link data-scroll-target="agents" data-agent-key="content">商品</button>
+      <button type="button" data-main-link data-scroll-target="agents" data-agent-key="trend">选题</button>
+    </aside>
+
+    <main id="main-page">
+      <section class="hero" id="top" data-hero>
+        <img class="hero-bg" src="assets/hero-space-opera.png" alt="宏大的未来城市与 AI 智能体宇宙" />
+        <canvas class="star-canvas" data-stars aria-hidden="true"></canvas>
+        <div class="hero-shade"></div>
+        <div class="hero-scan" data-hero-scan aria-hidden="true"></div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">AI Agent Industry OS</p>
+            <h1 class="glow-title">把重复劳动交给 <span>AI</span><br />你只管做最值钱的事</h1>
+            <p>企业 AI 方案覆盖 6 大行业，3 款行业产品开箱即用。AI 生成内容，人的经验做校验——专注、精准、零配置。</p>
+            <div class="hero-actions">
+              <a class="btn-primary" href="#solutions">了解企业方案</a>
+              <a class="btn-outline" href="#agents">看看有哪些智能体</a>
+            </div>
+          </div>
+          <aside class="signal-panel">
+            <div class="panel-top">
+              <span>Live Signal</span>
+              <i></i>
+            </div>
+            <strong data-signal-text>文书生成智能体正在生成专业初稿</strong>
+            <div class="signal-track"><span></span></div>
+            <div class="panel-chips">
+              <button class="active" type="button" data-agent-key="doc">文书</button>
+              <button type="button" data-agent-key="risk">审查</button>
+              <button type="button" data-agent-key="service">客服</button>
+              <button type="button" data-agent-key="content">商品</button>
+              <button type="button" data-agent-key="trend">选题</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="metric-section section">
+        <div class="metric-grid fade-up">
+          <div><strong>6</strong><span>大行业深度方案</span></div>
+          <div><strong>3</strong><span>款行业产品</span></div>
+          <div><strong>12+</strong><span>语言智能支持</span></div>
+          <div><strong>99.9%</strong><span>系统可用性</span></div>
+        </div>
+      </section>
+
+      <section class="section" id="solutions">
+        <div class="section-header">
+          <p class="eyebrow">Enterprise Solutions</p>
+          <h2>企业解决方案</h2>
+          <p>覆盖 6 大行业，每个方案都直击一线痛点。选你的行业，看 AI 能帮你做什么。</p>
+        </div>
+        <div class="tabs" id="industry-tabs">
+          <button class="tab active" type="button" data-industry="mfg">制造业</button>
+          <button class="tab" type="button" data-industry="finance">金融 / 保险</button>
+          <button class="tab" type="button" data-industry="retail">电商 / 零售</button>
+          <button class="tab" type="button" data-industry="edu">教育 / 培训</button>
+          <button class="tab" type="button" data-industry="gov">政务 / 公共服务</button>
+          <button class="tab" type="button" data-industry="logistics">物流 / 供应链</button>
+        </div>
+        <div class="solution-panel glass-panel" data-solution-panel></div>
+      </section>
+
+      <section class="section section-alt" id="agents">
+        <div class="section-header">
+          <p class="eyebrow">Agent Catalog</p>
+          <h2>智能体</h2>
+          <p>不是一个泛泛的 AI 助手，而是一组面向具体岗位和业务链路的数字员工。这里展示的是可单独部署、也可组合进产品里的能力型智能体。</p>
+        </div>
+        <div class="agent-grid">
+          <button class="agent-card active" type="button" data-agent-key="doc">
+            <span class="agent-icon">📄</span>
+            <h3>文书生成智能体</h3>
+            <p>把案情、材料和模板变成规范初稿</p>
+            <ul>
+              <li>起诉状、律师函、合同条款初稿</li>
+              <li>自动套用法院/平台/品牌模板</li>
+              <li>材料完整性与格式校验</li>
+            </ul>
+          </button>
+          <button class="agent-card" type="button" data-agent-key="risk">
+            <span class="agent-icon">🛡</span>
+            <h3>风险审查智能体</h3>
+            <p>专门发现合同、流程和投放里的隐性风险</p>
+            <ul>
+              <li>合同差异比对与不利条款提示</li>
+              <li>合规、售后、投放风险扫描</li>
+              <li>输出修改建议和人工确认项</li>
+            </ul>
+          </button>
+          <button class="agent-card" type="button" data-agent-key="service">
+            <span class="agent-icon">🎧</span>
+            <h3>多语客服智能体</h3>
+            <p>7×24 接住咨询、售后和线索分流</p>
+            <ul>
+              <li>英西法德日等多语言问答</li>
+              <li>退换货、物流、常见咨询处理</li>
+              <li>高价值线索自动标记给人工</li>
+            </ul>
+          </button>
+          <button class="agent-card" type="button" data-agent-key="content">
+            <span class="agent-icon">📦</span>
+            <h3>商品内容智能体</h3>
+            <p>批量生成可上架、可投放的内容资产</p>
+            <ul>
+              <li>SKU 标题、卖点、详情页描述</li>
+              <li>适配亚马逊、TikTok、独立站风格</li>
+              <li>自动嵌入 SEO 关键词</li>
+            </ul>
+          </button>
+          <button class="agent-card" type="button" data-agent-key="trend">
+            <span class="agent-icon">📡</span>
+            <h3>热点选题智能体</h3>
+            <p>从趋势里提前发现可爆的内容方向</p>
+            <ul>
+              <li>全平台热点雷达与趋势监测</li>
+              <li>结合账号定位推荐高爆率选题</li>
+              <li>生成标题、封面话术和脚本角度</li>
+            </ul>
+          </button>
+          <button class="agent-card" type="button" data-detail="video">
+            <span class="agent-icon">🎬</span>
+            <h3>短视频获客智能体</h3>
+            <p>把企业服务卖点变成可发布的获客短视频</p>
+            <ul>
+              <li>生成短视频选题、脚本和开场钩子</li>
+              <li>自动生成封面图、分镜和视频素材</li>
+              <li>适配抖音、视频号、小红书等获客渠道</li>
+            </ul>
+          </button>
+        </div>
+        <div class="agent-console glass-panel">
+          <div>
+            <p class="eyebrow" data-console-kicker>文书生成智能体</p>
+            <h3 data-console-title>把重复写作变成可校验的专业初稿</h3>
+            <p data-console-copy>输入案情、商品参数或内容目标，智能体先生成结构化初稿，再交给人做判断和确认。</p>
+          </div>
+          <ol data-console-flow></ol>
+        </div>
+        <p class="agent-note">这些智能体可以单独部署，也可以组合成行业产品：律智AI、跨境智营、爆文工厂。</p>
+      </section>
+
+      <section class="section" id="products">
+        <div class="section-header">
+          <p class="eyebrow">Industry Products</p>
+          <h2>行业产品</h2>
+          <p>不做泛化 AI，每个产品只为一个行业深度定制。打开即用，零配置。</p>
+        </div>
+        <div class="product-grid">
+          <button class="product-card" type="button" data-detail="law">
+            <h3>律智AI <span>律师智能工作台</span></h3>
+            <p>开庭之外的一切，交给 AI</p>
+            <ul>
+              <li>智能合同审查：NDA 从 92 分钟 → 30 秒</li>
+              <li>法律文书生成：起诉状从 2 小时 → 5 分钟</li>
+              <li>案例法规检索：法律研究从半天 → 5 分钟</li>
+              <li>7×24 案源咨询：秒级响应，不漏夜询</li>
+            </ul>
+            <div class="stats"><b>90%+</b><b>3-4h</b><b>94%</b></div>
+          </button>
+          <button class="product-card" type="button" data-detail="cross">
+            <h3>跨境智营 <span>出海AI增长引擎</span></h3>
+            <p>一个系统，搞定跨境生意的全部线上环节</p>
+            <ul>
+              <li>外部客资营销：主动获客，成本降 60%</li>
+              <li>多平台运营：1 人管 5 平台</li>
+              <li>本土化内容：Listing 转化率提升 35%</li>
+              <li>多语种客服：12 种语言，秒级响应</li>
+            </ul>
+            <div class="stats"><b>5×</b><b>60%</b><b>35%</b></div>
+          </button>
+          <button class="product-card" type="button" data-detail="media">
+            <h3>爆文工厂 <span>创作者AI中台</span></h3>
+            <p>一个人，就是一个内容团队</p>
+            <ul>
+              <li>热点选题：选题从 30 分钟 → 30 秒</li>
+              <li>多平台一键生成：1 篇内容，4 个版本</li>
+              <li>智能配图排版：排版 1 小时 → 30 秒</li>
+              <li>数据复盘：数据驱动涨粉</li>
+            </ul>
+            <div class="stats"><b>4-7×</b><b>65%</b><b>6</b></div>
+          </button>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="about">
+        <div class="section-header">
+          <p class="eyebrow">Why Us</p>
+          <h2>为什么选择我们</h2>
+          <p>我们不只做工具，我们让每个行业拥有自己的 AI 系统。</p>
+        </div>
+        <div class="compare-grid glass-panel">
+          <div><b>部署</b><span>传统方式：需要技术团队、几个月上线</span><strong>SaaS 开通即用，1 天跑起来</strong></div>
+          <div><b>行业适配</b><span>传统方式：通用工具，需要大量定制</span><strong>6 大行业预置方案，开箱匹配</strong></div>
+          <div><b>数据安全</b><span>传统方式：云端存储，数据流向不明</span><strong>数据本地加密，不做模型训练</strong></div>
+          <div><b>持续迭代</b><span>传统方式：买完即止，版本冻结</span><strong>大模型每周更新，系统自动变强</strong></div>
+          <div><b>上手难度</b><span>传统方式：需要培训、看手册</span><strong>自然语言操作，问什么答什么</strong></div>
+        </div>
+      </section>
+
+      <section class="section" id="cases">
+        <div class="section-header">
+          <p class="eyebrow">Cases</p>
+          <h2>客户案例</h2>
+          <p>真实场景，真实数据。AI 落地，不说故事，只看结果。</p>
+        </div>
+        <div class="case-grid">
+          <article class="case-card glass-panel">
+            <h3>某区域百强房企 · 售前智能客服</h3>
+            <p>该房企引入 AI 全媒体联络中心，实现从“人找线索”到“线索找人”的转变。</p>
+            <div><strong>80%</strong><span>坐席效率提升</span><strong>95%</strong><span>客户满意度</span><strong>22×</strong><span>线索转化效率</span></div>
+          </article>
+          <article class="case-card glass-panel">
+            <h3>某汽车集团 · 智能质检系统</h3>
+            <p>AI 质检系统实现从“事后抽检”到“全量实时监控”的转变。</p>
+            <div><strong>100%</strong><span>通话质检覆盖率</span><strong>-60%</strong><span>投诉率下降</span><strong>即时</strong><span>违规预警响应</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="cta-section" id="cta">
+        <h2>准备好让 AI 为你的业务加速了吗？</h2>
+        <p>预约产品演示，我们会在 24 小时内联系你。免费试用，无任何绑定。</p>
+        <div class="hero-actions">
+          <button class="btn-primary" type="button" data-open-modal>预约演示</button>
+          <button class="btn-outline" type="button" data-open-modal>免费试用</button>
+        </div>
+      </section>
+    </main>
+
+    <section class="detail-page" id="detail-law" data-detail-page>
+      <div class="detail-hero detail-law">
+        <button class="back-button" type="button" data-main-link>返回首页</button>
+        <span class="icon-circle">⚖</span>
+        <h1>律智AI</h1>
+        <p>律师智能工作台 - 开庭之外的一切，交给 AI</p>
+        <div class="hero-metrics"><div><b>3分钟</b><span>生成起诉状</span></div><div><b>94%</b><span>审查准确率</span></div><div><b>3-4h</b><span>日均节省</span></div></div>
+      </div>
+      <div class="section"><div class="section-header"><h2>痛点 × 方案</h2><p>每一个律师都在和时间赛跑。我们把跑道清出来。</p></div><div class="pain-grid" data-pain-grid="law"></div></div>
+      <div class="quote-block">你80%的时间被文书、立案、重复咨询吃掉，只有20%用在真正值钱的庭审策略上。律智AI不是替代律师，是把你从表格和格式里捞出来——起诉状3分钟生成、合同风险自动扫描、当事人深夜咨询AI先挡一轮。开庭前你专注开庭，其他杂事，AI扛了。</div>
+      <div class="detail-cta"><button class="btn-primary" type="button" data-open-modal>免费试用律智AI</button></div>
+    </section>
+
+    <section class="detail-page" id="detail-cross" data-detail-page>
+      <div class="detail-hero detail-cross">
+        <button class="back-button" type="button" data-main-link>返回首页</button>
+        <span class="icon-circle">🌍</span>
+        <h1>跨境智营</h1>
+        <p>出海AI增长引擎 - 一个系统，搞定跨境生意的全部线上环节</p>
+        <div class="hero-metrics"><div><b>5×</b><span>运营人效提升</span></div><div><b>60%</b><span>获客成本降低</span></div><div><b>12</b><span>语言全覆盖</span></div></div>
+      </div>
+      <div class="section"><div class="section-header"><h2>痛点 × 方案</h2><p>出海不是把中文翻译成英文。出海是用 AI 重写规则。</p></div><div class="pain-grid" data-pain-grid="cross"></div></div>
+      <div class="flow-row" data-flow="cross"></div>
+      <div class="quote-block">你的竞品已经用AI一天上架200个SKU，你还在招月薪8千的英语客服三班倒？跨境智营把“海外获客-多语客服-内容生产”整条链路串成自动流水线。省下的不是成本，是你抢窗口期的时间。</div>
+      <div class="detail-cta"><button class="btn-primary" type="button" data-open-modal>免费试用跨境智营</button></div>
+    </section>
+
+    <section class="detail-page" id="detail-media" data-detail-page>
+      <div class="detail-hero detail-media">
+        <button class="back-button" type="button" data-main-link>返回首页</button>
+        <span class="icon-circle">✨</span>
+        <h1>爆文工厂</h1>
+        <p>创作者AI中台 - 一个人，就是一个内容团队</p>
+        <div class="hero-metrics"><div><b>4-7×</b><span>产出效率提升</span></div><div><b>65%</b><span>内容成本降低</span></div><div><b>30秒</b><span>选题耗时</span></div></div>
+      </div>
+      <div class="section"><div class="section-header"><h2>痛点 × 方案</h2><p>你不是内容流水线工人。脏活累活，AI 全接了。</p></div><div class="pain-grid" data-pain-grid="media"></div></div>
+      <div class="flow-row" data-flow="media"></div>
+      <div class="quote-block">你花了70%时间在“找选题-改格式-看数据”上，真正创作的时间被挤成碎片。爆文工厂把这套脏活累活全接了。你只管写，其他交给流水线。</div>
+      <div class="detail-cta"><button class="btn-primary" type="button" data-open-modal>免费试用爆文工厂</button></div>
+    </section>
+
+    <section class="detail-page" id="detail-video" data-detail-page>
+      <div class="detail-hero detail-video">
+        <button class="back-button" type="button" data-main-link>返回首页</button>
+        <span class="icon-circle">🎬</span>
+        <h1>短视频获客智能体</h1>
+        <p>把企业服务、行业痛点和核心卖点，生成可用于获客引流的短视频内容资产。</p>
+        <div class="hero-metrics">
+          <div><b>1</b><span>当前可用智能体</span></div>
+          <div><b>3步</b><span>生成文案、画面、视频</span></div>
+          <div><b>SaaS</b><span>注册充值后正式使用</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="video-agent-workspace">
+          <aside class="video-agent-sidebar glass-panel">
+            <p class="eyebrow">Video Agent List</p>
+            <h2>有哪些短视频获客智能体</h2>
+            <button class="active" type="button">AI 生成视频智能体</button>
+          </aside>
+
+          <section class="video-agent-main glass-panel">
+            <div class="section-header compact">
+              <p class="eyebrow">AI Video Generator</p>
+              <h2>AI 生成视频智能体</h2>
+              <p>输入公司、行业、产品和核心卖点，生成短视频标题、开场钩子、脚本文案、配图和视频结果。当前调用本地 FastAPI：POST /api/video-agent/generate。</p>
+            </div>
+            <div class="video-agent-panel">
+              <form class="video-agent-form" data-video-agent-form>
+                <label>公司/品牌名称<input type="text" name="company_name" placeholder="例如：深度觉醒" /></label>
+                <label>行业<input type="text" name="industry" placeholder="例如：制造业、跨境电商、法律服务" /></label>
+                <label>产品/服务<input type="text" name="product_name" placeholder="例如：企业智能体 SaaS 平台" /></label>
+                <label class="wide">核心卖点<textarea name="selling_points" rows="3" placeholder="例如：客服自动化、知识库问答、ERP/OA 对接、短视频获客引流"></textarea></label>
+                <div class="form-row">
+                  <label>发布平台<select name="platform"><option>抖音</option><option>视频号</option><option>小红书</option><option>B站</option></select></label>
+                  <label>视频时长<input type="number" name="video_duration" min="3" max="180" value="5" /></label>
+                </div>
+                <div class="form-row">
+                  <label>文案数量<input type="number" name="copy_count" min="1" max="5" value="3" /></label>
+                  <label>图片数量<input type="number" name="image_count" min="0" max="4" value="2" /></label>
+                </div>
+                <label class="checkbox-line"><input type="checkbox" name="generate_video" checked /> 同时生成视频</label>
+                <button class="btn-primary" type="submit">生成获客短视频</button>
+                <p class="video-agent-hint">生成视频可能需要几十秒到数分钟。正式上线后这里会接入登录、充值、额度扣减和生成记录。</p>
+              </form>
+              <section class="video-agent-result" aria-live="polite">
+                <div class="video-result-top">
+                  <div>
+                    <p class="eyebrow">Result</p>
+                    <h3 data-video-result-title>等待生成</h3>
+                  </div>
+                  <span data-video-status>待提交</span>
+                </div>
+                <div class="video-output empty" data-video-output>填写企业信息后，系统会返回短视频标题、开场钩子、脚本文案、话题标签、配图和视频结果。</div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>深度觉醒（上海）人工智能技术有限公司 · AI 科技驱动创新增长</p>
+    </footer>
+
+    <button class="back-top" type="button" data-back-top>↑</button>
+
+    <div class="modal" data-modal aria-hidden="true">
+      <div class="modal-card">
+        <button class="modal-close" type="button" data-close-modal aria-label="关闭">×</button>
+        <div data-modal-form>
+          <h2>预约演示</h2>
+          <p>我们会在 24 小时内与你联系，安排专属演示。</p>
+          <label>公司名称<input type="text" data-field-company placeholder="请输入公司名称" /></label>
+          <label>姓名<input type="text" data-field-name placeholder="请输入您的姓名" /></label>
+          <label>手机号<input type="tel" data-field-phone placeholder="请输入 11 位手机号" /></label>
+          <small data-form-error></small>
+          <button class="btn-primary" type="button" data-submit-booking>提交预约</button>
+        </div>
+        <div class="modal-success" data-modal-success>
+          <strong>✓</strong>
+          <h3>预约已提交</h3>
+          <p>已收到你的预约信息，我们会尽快联系你。</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      window.AI_DIGITAL_HUMAN_CONFIG = {
+        brandName: "深度觉醒 AI 顾问",
+        greeting: "你好，我是深度觉醒的 AI 数字人顾问。你可以问我企业方案、智能体产品、适合哪个场景，或直接预约演示。",
+        presenceTitle: "你好，我在这里",
+        presenceMessage: "想知道哪类智能体适合你？点我聊聊。",
+        avatar: "assets/ai-digital-human.png",
+        endpoint: "",
+        quickQuestions: ["我们有哪些智能体？", "律师适合哪个产品？", "跨境电商怎么用？", "预约演示"]
+      };
+    </script>
+    <script src="assets/ai-widget.js"></script>
+  </body>
+</html>

@@ -1,0 +1,984 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度觉醒 - AI 行业智能工作台</title>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-dark: #3730A3;
+    --primary-light: #EEF2FF;
+    --accent: #06B6D4;
+    --accent2: #F59E0B;
+    --bg: #FFFFFF;
+    --bg-gray: #F8FAFC;
+    --text: #1E293B;
+    --text-secondary: #64748B;
+    --border: #E2E8F0;
+    --shadow: 0 1px 3px rgba(0,0,0,.08);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    color: var(--text); background: var(--bg); line-height: 1.7; font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Nav ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(255,255,255,.88); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border); padding: 0 40px;
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 20px; font-weight: 700; color: var(--primary); cursor:pointer; }
+  .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--text-secondary); font-size: 15px; transition: color .2s; cursor:pointer; }
+  .nav-links a:hover { color: var(--primary); }
+  .nav-cta {
+    background: var(--primary); color: #fff; border: none; padding: 10px 24px;
+    border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s;
+  }
+  .nav-cta:hover { background: var(--primary-dark); }
+  /* Dropdown */
+  .dropdown { position: relative; }
+  .dropdown-menu {
+    display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg); padding: 8px 0; min-width: 180px; z-index: 1001;
+  }
+  .dropdown:hover .dropdown-menu { display: block; }
+  .dropdown-menu a {
+    display: block; padding: 10px 20px; font-size: 14px; white-space: nowrap; text-decoration: none; color: var(--text);
+  }
+  .dropdown-menu a:hover { background: var(--primary-light); color: var(--primary); }
+
+  /* ===== Hero ===== */
+  .hero {
+    padding: 160px 40px 120px; text-align: center;
+    background: linear-gradient(180deg, #EEF2FF 0%, #FFFFFF 100%);
+  }
+  .hero h1 { font-size: 52px; font-weight: 800; color: var(--text); max-width: 760px; margin: 0 auto 24px; letter-spacing: -1px; line-height: 1.25; }
+  .hero h1 span { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { font-size: 20px; color: var(--text-secondary); max-width: 640px; margin: 0 auto 48px; }
+  .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--primary); color: #fff; border: none; padding: 14px 36px; border-radius: 28px;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,70,229,.3); }
+  .btn-outline {
+    background: #fff; color: var(--primary); border: 2px solid var(--primary); padding: 14px 36px;
+    border-radius: 28px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+  .btn-accent {
+    background: var(--accent2); color: #fff; border: none; padding: 14px 36px; border-radius: 28px;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+  }
+  .btn-accent:hover { background: #D97706; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(245,158,11,.3); }
+
+  /* ===== Section ===== */
+  .section { padding: 100px 40px; }
+  .section-gray { background: var(--bg-gray); }
+  .section-dark { background: #1E293B; color: #fff; }
+  .section-header { text-align: center; margin-bottom: 64px; }
+  .section-header h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
+  .section-header p { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+  .section-dark .section-header p { color: #94A3B8; }
+
+  /* ===== Data Bar ===== */
+  .data-bar { display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; }
+  .data-item { text-align: center; }
+  .data-item .num { font-size: 42px; font-weight: 800; color: var(--primary); transition: all .3s; }
+  .data-item .label { font-size: 15px; color: var(--text-secondary); margin-top: 8px; }
+
+  /* ===== Scroll Anim ===== */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== Tabs (To B) ===== */
+  .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 48px; flex-wrap: wrap; }
+  .tab {
+    padding: 10px 24px; border-radius: 24px; border: 1px solid var(--border);
+    background: #fff; color: var(--text-secondary); font-size: 15px; cursor: pointer; transition: all .2s;
+  }
+  .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+  .sol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .sol-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: all .3s;
+  }
+  .sol-card:hover { border-color: var(--primary); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .sol-card h4 { font-size: 17px; margin-bottom: 8px; }
+  .sol-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 8px; }
+  .sol-card .metric { color: var(--primary); font-weight: 700; font-size: 14px; }
+  .hidden { display: none; }
+
+
+  /* ===== Agent Catalog ===== */
+  .agent-catalog { max-width: 1160px; margin: 0 auto; }
+  .agent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .agent-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px; box-shadow: var(--shadow); transition: all .3s; position: relative; overflow: hidden;
+  }
+  .agent-card::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  .agent-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+  .agent-card .agent-icon {
+    width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    background: var(--primary-light); color: var(--primary); font-size: 24px; margin-bottom: 18px;
+  }
+  .agent-card h3 { font-size: 20px; margin-bottom: 8px; }
+  .agent-card .agent-role { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
+  .agent-card ul { list-style: none; display: grid; gap: 8px; }
+  .agent-card li { color: var(--text-secondary); font-size: 14px; padding-left: 18px; position: relative; }
+  .agent-card li::before { content: '•'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+  .agent-note {
+    margin-top: 24px; padding: 20px 24px; border-radius: var(--radius-sm); background: var(--primary-light);
+    color: var(--primary-dark); font-size: 15px; text-align: center; font-weight: 600;
+  }
+
+  /* ===== Product Cards ===== */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
+  .product-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 36px; transition: all .3s; position: relative; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; display: block;
+  }
+  .product-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .product-card h3 { font-size: 22px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .product-card .subtitle { color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; }
+  .product-card .features { list-style: none; margin-bottom: 20px; }
+  .product-card .features li { font-size: 14px; color: var(--text-secondary); padding: 6px 0; padding-left: 20px; position: relative; }
+  .product-card .features li::before { content: '✓'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+  .product-card .stats { display: flex; gap: 24px; margin: 20px 0; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .product-card .stat-item .val { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .product-card .stat-item .desc { font-size: 12px; color: var(--text-secondary); }
+  .product-card .arrow { position: absolute; bottom: 24px; right: 24px; width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; transition: all .3s; }
+  .product-card:hover .arrow { background: var(--primary); color: #fff; }
+
+  /* ===== Product Detail Pages ===== */
+  .detail-page { display: none; }
+  .detail-page.active { display: block; }
+  .detail-hero {
+    padding: 160px 40px 80px; text-align: center; position: relative; overflow: hidden;
+  }
+  .detail-hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px; width: 500px; height: 500px;
+    border-radius: 50%; opacity: .08; animation: float 8s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+  }
+  .detail-law .detail-hero { background: linear-gradient(180deg, #EEF2FF 0%, #FFFFFF 100%); }
+  .detail-law .detail-hero::before { background: var(--primary); }
+  .detail-cross .detail-hero { background: linear-gradient(180deg, #ECFEFF 0%, #FFFFFF 100%); }
+  .detail-cross .detail-hero::before { background: var(--accent); right: auto; left: -200px; }
+  .detail-media .detail-hero { background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 100%); }
+  .detail-media .detail-hero::before { background: var(--accent2); }
+  .detail-hero .icon-circle {
+    width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center; font-size: 36px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(79,70,229,.3); }
+    50% { box-shadow: 0 0 0 20px rgba(79,70,229,0); }
+  }
+  .detail-law .icon-circle { background: var(--primary); }
+  .detail-cross .icon-circle { background: var(--accent); }
+  .detail-media .icon-circle { background: var(--accent2); }
+  .detail-hero h1 { font-size: 44px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; }
+  .detail-hero .hero-sub { font-size: 20px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
+  .detail-hero .hero-metrics { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; margin-top: 40px; }
+  .detail-hero .hm-item .hm-val { font-size: 36px; font-weight: 700; }
+  .detail-law .hm-val { color: var(--primary); }
+  .detail-cross .hm-val { color: var(--accent); }
+  .detail-media .hm-val { color: var(--accent2); }
+  .detail-hero .hm-item .hm-label { font-size: 14px; color: var(--text-secondary); }
+
+  /* Pain-Solution Cards */
+  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+  .pain-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0; overflow: hidden; transition: all .3s; position: relative;
+  }
+  .pain-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .pain-card .pain-header {
+    padding: 28px; background: #FEF2F2; border-bottom: 1px solid #FECACA;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .pain-card .pain-icon {
+    width: 44px; height: 44px; border-radius: 50%; background: #FEE2E2;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .pain-card .pain-text h4 { font-size: 16px; color: #991B1B; margin-bottom: 4px; }
+  .pain-card .pain-text p { font-size: 13px; color: #B91C1C; line-height: 1.6; }
+  .pain-card .solution-body {
+    padding: 28px; position: relative;
+  }
+  .pain-card .solution-body::before {
+    content: '↓';
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 28px; border-radius: 50%; background: var(--primary);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .detail-cross .solution-body::before { background: var(--accent); }
+  .detail-media .solution-body::before { background: var(--accent2); }
+  .pain-card .solution-body h4 { font-size: 16px; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .detail-cross .solution-body h4 { color: var(--accent); }
+  .detail-media .solution-body h4 { color: var(--accent2); }
+  .pain-card .solution-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Quote Block */
+  .quote-block {
+    max-width: 800px; margin: 0 auto; padding: 40px 48px;
+    background: var(--bg-gray); border-left: 4px solid var(--primary); border-radius: var(--radius-sm);
+    position: relative;
+  }
+  .quote-block::before { content: '"'; position: absolute; top: 10px; left: 16px; font-size: 60px; color: var(--primary); opacity: .15; font-family: Georgia, serif; line-height: 1; }
+  .quote-block p { font-size: 18px; line-height: 1.8; color: var(--text); position: relative; z-index: 1; }
+
+  /* Process Flow */
+  .flow-row {
+    display: flex; gap: 0; align-items: stretch; justify-content: center; flex-wrap: wrap; max-width: 1100px; margin: 0 auto;
+  }
+  .flow-step {
+    flex: 1; min-width: 200px; text-align: center; padding: 24px 16px; position: relative;
+    background: #fff; border: 1px solid var(--border);
+  }
+  .flow-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .flow-step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .flow-step .step-num {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+    font-weight: 700; font-size: 16px;
+  }
+  .detail-cross .flow-step .step-num { background: var(--accent); }
+  .detail-media .flow-step .step-num { background: var(--accent2); }
+  .flow-step h4 { font-size: 15px; margin-bottom: 6px; }
+  .flow-step p { font-size: 13px; color: var(--text-secondary); }
+  .flow-arrow { display: flex; align-items: center; font-size: 24px; color: var(--border); padding: 0 4px; }
+
+  /* ===== Compare Table ===== */
+  .compare-table { max-width: 900px; margin: 0 auto; width: 100%; border-collapse: collapse; }
+  .compare-table th { background: var(--primary); color: #fff; padding: 16px 24px; text-align: left; font-size: 15px; }
+  .compare-table td { padding: 14px 24px; border-bottom: 1px solid var(--border); font-size: 15px; }
+  .compare-table tr:nth-child(even) td { background: var(--bg-gray); }
+  .compare-table td:first-child { font-weight: 600; }
+
+  /* ===== Case ===== */
+  .case {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 36px; max-width: 900px; margin: 0 auto;
+  }
+  .case h3 { font-size: 20px; margin-bottom: 16px; }
+  .case .case-tags { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tag { background: var(--primary-light); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 13px; }
+  .case .case-metrics { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px; }
+  .case .case-metric .big { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .case .case-metric .small { font-size: 13px; color: var(--text-secondary); }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    text-align: center; padding: 100px 40px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;
+  }
+  .cta-section h2 { font-size: 36px; margin-bottom: 16px; }
+  .cta-section p { font-size: 18px; opacity: .85; margin-bottom: 40px; }
+  .cta-section .btn-primary { background: #fff; color: var(--primary); }
+  .cta-section .btn-primary:hover { background: #EEF2FF; }
+  .cta-section .btn-outline { border-color: #fff; color: #fff; background: transparent; }
+  .cta-section .btn-outline:hover { background: rgba(255,255,255,.1); }
+
+  /* ===== Footer ===== */
+  .footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); }
+  .footer p { color: var(--text-secondary); font-size: 14px; }
+
+  /* ===== Back to top ===== */
+  .back-top {
+    position: fixed; bottom: 30px; right: 30px; z-index: 999;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--primary); color: #fff;
+    border: none; cursor: pointer; font-size: 20px; display: none; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); transition: all .2s;
+  }
+  .back-top:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 20px 80px; }
+    .hero h1 { font-size: 32px; }
+    .hero p { font-size: 17px; }
+    .section { padding: 60px 20px; }
+    .section-header h2 { font-size: 28px; }
+    .data-bar { gap: 32px; }
+    .data-item .num { font-size: 28px; }
+    .product-grid, .sol-grid, .pain-grid { grid-template-columns: 1fr; }
+    .detail-hero { padding: 120px 20px 60px; }
+    .detail-hero h1 { font-size: 32px; }
+    .detail-hero .hero-metrics { gap: 24px; }
+    .quote-block { padding: 24px; }
+    .flow-row { flex-direction: column; }
+    .flow-step { border-radius: 0 !important; }
+    .flow-arrow { transform: rotate(90deg); padding: 0; }
+  }
+
+  /* ===== Modal ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal { background: #fff; border-radius: 16px; padding: 40px 36px 36px; width: 440px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,.25); position: relative; }
+  .modal h2 { font-size: 22px; margin-bottom: 6px; color: #1E1B4B; }
+  .modal .modal-sub { font-size: 14px; color: #6B7280; margin-bottom: 28px; }
+  .modal .form-group { margin-bottom: 20px; }
+  .modal .form-group label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  .modal .form-group input { width: 100%; padding: 12px 14px; border: 1.5px solid #D1D5DB; border-radius: 10px; font-size: 15px; transition: border-color .2s; box-sizing: border-box; }
+  .modal .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
+  .modal .form-group input.error { border-color: #EF4444; }
+  .modal .form-error { font-size: 12px; color: #EF4444; margin-top: 4px; display: none; }
+  .modal .form-error.show { display: block; }
+  .modal .btn-submit { width: 100%; padding: 13px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .modal .btn-submit:hover { background: var(--primary-dark); }
+  .modal .btn-submit:disabled { background: #9CA3AF; cursor: not-allowed; }
+  .modal .close-btn { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 22px; color: #9CA3AF; cursor: pointer; line-height: 1; }
+  .modal .close-btn:hover { color: #374151; }
+  .modal-success { text-align: center; padding: 20px 0; display: none; }
+  .modal-success.show { display: block; }
+  .modal-success .check-icon { width: 64px; height: 64px; background: #ECFDF5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
+  .modal-success h3 { font-size: 20px; color: #065F46; margin-bottom: 8px; }
+  .modal-success p { font-size: 14px; color: #6B7280; }
+
+
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-logo" onclick="showMainPage()">深度觉醒（上海）人工智能技术有限公司</div>
+  <ul class="nav-links">
+    <li><a onclick="showMainPage();document.getElementById('solutions').scrollIntoView()">企业解决方案</a></li>
+    <li class="dropdown">
+      <a>行业产品 ▾</a>
+      <div class="dropdown-menu">
+        <a onclick="showDetail('law')">律智AI · 律师智能工作台</a>
+        <a onclick="showDetail('cross')">跨境智营 · 出海AI增长引擎</a>
+        <a onclick="showDetail('media')">爆文工厂 · 创作者AI中台</a>
+      </div>
+    </li>
+    <li><a onclick="showMainPage();document.getElementById('agents').scrollIntoView()">智能体</a></li>
+    <li><a onclick="showMainPage();document.getElementById('cases').scrollIntoView()">客户案例</a></li>
+    <li><a onclick="showMainPage();document.getElementById('about').scrollIntoView()">关于我们</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openModal()">预约演示</button>
+</nav>
+
+<!-- ==================== MAIN PAGE ==================== -->
+<div id="main-page">
+
+<!-- Hero -->
+<section class="hero">
+  <h1>把重复劳动交给<span>AI</span>，<br>你只管做最值钱的事</h1>
+  <p>企业AI方案覆盖6大行业，3款行业产品开箱即用。AI生成内容，人的经验做校验——专注、精准、零配置。</p>
+  <div class="hero-btns">
+    <a href="#solutions" class="btn-primary">了解企业方案</a>
+    <a href="#products" class="btn-outline">免费试用行业产品</a>
+  </div>
+</section>
+
+<!-- Data Bar (revised) -->
+<section class="section">
+  <div class="data-bar fade-up">
+    <div class="data-item"><div class="num">6</div><div class="label">大行业深度方案</div></div>
+    <div class="data-item"><div class="num">3</div><div class="label">款行业产品</div></div>
+    <div class="data-item"><div class="num">12+</div><div class="label">语言智能支持</div></div>
+    <div class="data-item"><div class="num">99.9%</div><div class="label">系统可用性</div></div>
+  </div>
+</section>
+
+<!-- Solutions -->
+<section class="section section-gray" id="solutions">
+  <div class="section-header">
+    <h2>企业解决方案</h2>
+    <p>覆盖 6 大行业，每个方案都直击一线痛点。选你的行业，看 AI 能帮你做什么。</p>
+  </div>
+  <div class="tabs" id="industry-tabs">
+    <button class="tab active" data-industry="mfg">制造业</button>
+    <button class="tab" data-industry="finance">金融 / 保险</button>
+    <button class="tab" data-industry="retail">电商 / 零售</button>
+    <button class="tab" data-industry="edu">教育 / 培训</button>
+    <button class="tab" data-industry="gov">政务 / 公共服务</button>
+    <button class="tab" data-industry="logistics">物流 / 供应链</button>
+  </div>
+
+  <!-- Mfg -->
+  <div class="industry-content" id="content-mfg">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">让每一台设备、每一道工序、每一个订单，都在 AI 的调度下自动运转</h2><p>制造业的竞争已经从"谁能造"变成了"谁能造得更快、更省、更准"。大多数工厂的现实是：订单还在靠 Excel 排、质检还在靠老师傅的眼力、设备坏了才知道修。这些看不见的效率黑洞，每年在吃掉你 15%-25% 的利润。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>智能排产系统</h4><p>AI 根据订单紧急度、设备状态、物料库存，实时计算最优生产计划。插单自动重排，无需人工协调。</p><div class="metric">交期延误减少 40%，产能利用率提升 25%</div></div>
+      <div class="sol-card"><h4>预测性设备维护</h4><p>接入设备传感器数据，AI 提前 7-14 天预警故障，自动生成维修工单。</p><div class="metric">非计划停机减少 50%，维修成本降低 30%</div></div>
+      <div class="sol-card"><h4>AI 视觉质检</h4><p>产线摄像头实时检测产品外观缺陷，毫秒级判断合格/不合格。</p><div class="metric">漏检率从 3% → 0.1%，质检人力减少 70%</div></div>
+      <div class="sol-card"><h4>智能供应链协同</h4><p>AI 自动分析供应商交期、原材料价格波动、物流状态，动态调整采购计划。</p><div class="metric">库存周转率提升 35%，缺料停工减少 60%</div></div>
+      <div class="sol-card"><h4>智能工单与售后</h4><p>客户报修自动诊断故障原因，自动匹配维修方案和备件，自动分派最近工程师。</p><div class="metric">故障响应时间缩短 80%，一次修复率提升 40%</div></div>
+    </div>
+    <div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约制造业方案演示</a></div>
+  </div>
+
+  <div class="industry-content hidden" id="content-finance">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">风险看得见，合规守得住，客户服务快人一步</h2><p>金融行业不差钱，差的是效率。一笔企业信贷审 3 天，一份合同合规查 2 天，一个客户问了 5 次还在排队等人工。监管越来越严，客户耐心越来越短——靠堆人解决不了的问题，就是 AI 该上场的地方。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>智能风控与授信</h4><p>AI 自动采集企业工商、司法、税务、舆情数据，秒级生成风险评估报告和授信建议。</p><div class="metric">信贷审批从 3 天 → 30 分钟，不良率下降 25%</div></div>
+      <div class="sol-card"><h4>智能合规审查</h4><p>AI 自动对比合同、产品文案、营销材料与最新监管条款，逐条标记不合规项。</p><div class="metric">合规审查效率提升 90%，处罚风险降低 80%</div></div>
+      <div class="sol-card"><h4>智能客服与营销</h4><p>7×24 小时 AI 回答理财、贷款、保险等高频问题；根据客户画像自动推荐匹配产品。</p><div class="metric">客服人力减少 50%，交叉销售转化率提升 35%</div></div>
+      <div class="sol-card"><h4>智能理赔系统</h4><p>AI 识别车损照片/医疗单据，自动匹配保单条款和赔付标准，秒级出定损建议。</p><div class="metric">小额理赔从 3 天 → 10 分钟，运营成本降低 60%</div></div>
+      <div class="sol-card"><h4>智能投研助手</h4><p>AI 自动抓取研报、新闻、财报，生成行业分析简报和投资建议摘要。</p><div class="metric">投研效率提升 5 倍，信息覆盖率提升 90%</div></div>
+    </div><div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约金融方案演示</a></div>
+  </div>
+  <div class="industry-content hidden" id="content-retail">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">从选品到售后，AI 搞定全部线上运营</h2><p>做电商越来越像在跑步机上跑步——拼命跑，但利润原地不动。流量越来越贵、客户耐心越来越短。你花了 5 个人做运营，对手用 1 个人 + AI，成本是你的一半，效率是你的两倍。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>AI 商品内容工厂</h4><p>输入产品参数，AI 一键生成标题+详情+卖点+多语种版本+短视频脚本。</p><div class="metric">上架效率提升 5 倍，内容团队缩减 60%</div></div>
+      <div class="sol-card"><h4>智能客服（大促版）</h4><p>大促峰值 10 万+并发秒级响应，自动处理退换货、物流查询、优惠券问题。</p><div class="metric">大促人力成本降低 70%，客户满意度提升 25%</div></div>
+      <div class="sol-card"><h4>智能补货与库存</h4><p>AI 结合销量趋势、促销计划、季节因素、竞品动态，自动生成补货建议。</p><div class="metric">缺货率降低 40%，滞销库存减少 35%</div></div>
+      <div class="sol-card"><h4>精准用户运营</h4><p>AI 根据用户行为自动分层打标签，自动推送个性化优惠券和内容。</p><div class="metric">复购率提升 30%，营销 ROI 提升 2 倍</div></div>
+      <div class="sol-card"><h4>智能评论分析</h4><p>AI 自动分析全平台用户评论，提取高频问题、负面情绪、产品改进建议。</p><div class="metric">差评响应速度提升 90%</div></div>
+    </div><div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约零售方案演示</a></div>
+  </div>
+  <div class="industry-content hidden" id="content-edu">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">让每个老师都有 AI 助教，让每个学生都有 AI 私教</h2><p>一个老师带 100 个学生，作业改到凌晨，答疑只能覆盖 20%。不是不重视，是人不够用。AI 的作用不是替代老师，而是让老师的精力只花在最值得的地方。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>AI 课程生成系统</h4><p>输入教学目标+受众+时长，AI 自动生成课程大纲、讲义、PPT、试题、案例库。</p><div class="metric">课程开发效率提升 4 倍</div></div>
+      <div class="sol-card"><h4>智能作业批改</h4><p>AI 自动批改客观题，辅助批改作文/论述题。</p><div class="metric">批改时间减少 75%</div></div>
+      <div class="sol-card"><h4>7×24 AI 答疑助手</h4><p>学生随时提问，AI 根据课程知识库个性化解答。</p><div class="metric">答疑覆盖率从 20% → 100%</div></div>
+      <div class="sol-card"><h4>AI 招生转化助手</h4><p>自动跟进潜在学员，智能回答课程相关问题。</p><div class="metric">试听转化率提升 40%，跟进人力减少 60%</div></div>
+      <div class="sol-card"><h4>学情智能分析</h4><p>AI 分析学生数据，自动生成个人学情报告和薄弱点诊断。</p><div class="metric">续费率提升 25%</div></div>
+    </div><div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约教育方案演示</a></div>
+  </div>
+  <div class="industry-content hidden" id="content-gov">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">让群众少跑路，让窗口少排队，让政策听得懂</h2><p>"材料不全，回去重填"——这句话浪费了办事群众 60% 的时间，也浪费了窗口人员 60% 的精力。政务服务的三大顽疾：政策看不懂、表单填不对、咨询排不上。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>政策智能解读</h4><p>AI 把政府文件转化为大白话问答，自动告知条件、流程、材料。</p><div class="metric">窗口咨询量减少 60%，群众满意度提升 40%</div></div>
+      <div class="sol-card"><h4>智能表单引导</h4><p>在线填表时 AI 实时引导，自动校验格式+完整性+逻辑一致性。</p><div class="metric">表单一次通过率从 50% → 90%</div></div>
+      <div class="sol-card"><h4>7×24 智能政务客服</h4><p>接入官网/公众号/小程序，AI 秒答常见问题。</p><div class="metric">人工接线压力降低 55%</div></div>
+      <div class="sol-card"><h4>AI 公文助手</h4><p>输入要点自动生成标准格式公文，自动校验格式规范性。</p><div class="metric">公文效率提升 5 倍，格式错误率降到 0</div></div>
+      <div class="sol-card"><h4>智能数据分析</h4><p>自动汇总多部门数据，AI 生成经济运行分析、民生趋势报告。</p><div class="metric">数据报告制作时间从 2 周 → 1 天</div></div>
+    </div><div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约政务方案演示</a></div>
+  </div>
+  <div class="industry-content hidden" id="content-logistics">
+    <div class="section-header" style="margin-bottom:40px"><h2 style="font-size:28px">每一件货的最优路线、最优时间、最优成本，AI 替你算好了</h2><p>物流行业本质上是数学题——但当变量多到人脑算不过来的时候，"差不多就行"就成了常态。而"差不多"每年带来的成本浪费，通常占总营收的 8%-12%。</p></div>
+    <div class="sol-grid">
+      <div class="sol-card"><h4>智能路径规划</h4><p>AI 实时分析路况、天气、限行、车辆载重，秒级计算最优配送路线。</p><div class="metric">运输成本降低 15%，准点率提升 25%</div></div>
+      <div class="sol-card"><h4>智能仓储管理</h4><p>AI 优化货位布局和拣货路径，自动调度 AGV/叉车。</p><div class="metric">拣货效率提升 3 倍，空间利用率提升 20%</div></div>
+      <div class="sol-card"><h4>智能报关系统</h4><p>AI 自动生成报关单，校验 HS 编码、税率、监管条件。</p><div class="metric">清关时间缩短 60%，退单率降到 1% 以下</div></div>
+      <div class="sol-card"><h4>异常预警与调度</h4><p>AI 实时监测全链路，自动识别延误/丢失/破损。</p><div class="metric">异常响应速度提升 80%，客户投诉减少 45%</div></div>
+      <div class="sol-card"><h4>需求预测与运力调度</h4><p>AI 预测未来 7-30 天订单量，自动调度运力。</p><div class="metric">运力浪费减少 30%，爆仓概率降低 50%</div></div>
+    </div><div style="text-align:center;margin-top:40px"><a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约物流方案演示</a></div>
+  </div>
+</section>
+
+
+<!-- Agent Catalog -->
+<section class="section" id="agents">
+  <div class="section-header">
+    <h2>我们有哪些智能体</h2>
+    <p>不是一个泛泛的 AI 助手，而是一组面向具体岗位和业务链路的数字员工。每个智能体都能独立处理高频任务，也能组合成完整工作流。</p>
+  </div>
+  <div class="agent-catalog">
+    <div class="agent-grid">
+      <div class="agent-card fade-up">
+        <div class="agent-icon">⚖</div>
+        <h3>律智AI</h3>
+        <div class="agent-role">律师智能工作台</div>
+        <ul>
+          <li>合同审查、风险扫描、条款比对</li>
+          <li>起诉状、律师函、立案材料生成</li>
+          <li>7×24 当事人常见咨询自动回复</li>
+        </ul>
+      </div>
+      <div class="agent-card fade-up">
+        <div class="agent-icon">🌍</div>
+        <h3>跨境智营</h3>
+        <div class="agent-role">出海AI增长引擎</div>
+        <ul>
+          <li>海外客资画像与广告投放优化</li>
+          <li>多语言客服、售后、物流咨询处理</li>
+          <li>SKU 描述批量生成与 SEO 优化</li>
+        </ul>
+      </div>
+      <div class="agent-card fade-up">
+        <div class="agent-icon">✨</div>
+        <h3>爆文工厂</h3>
+        <div class="agent-role">创作者AI中台</div>
+        <ul>
+          <li>热点雷达与高爆率选题预测</li>
+          <li>一稿多平台改写与分发适配</li>
+          <li>爆款因子拆解和下周策略生成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="agent-note">后续还可按企业需求扩展：销售跟进智能体、客服接待智能体、数据分析智能体、流程自动化智能体。</div>
+  </div>
+</section>
+<!-- Products -->
+<section class="section" id="products">
+  <div class="section-header">
+    <h2>行业产品</h2>
+    <p>不做泛化 AI，每个产品只为一个行业深度定制。打开即用，零配置。</p>
+  </div>
+  <div class="product-grid">
+    <a class="product-card" onclick="showDetail('law')">
+      <h3>律智AI <span style="font-size:14px;color:var(--text-secondary);font-weight:400">律师智能工作台</span></h3>
+      <p class="subtitle">开庭之外的一切，交给 AI</p>
+      <ul class="features">
+        <li>智能合同审查：NDA 从 92 分钟 → 30 秒</li>
+        <li>法律文书生成：起诉状从 2 小时 → 5 分钟</li>
+        <li>案例法规检索：法律研究从半天 → 5 分钟</li>
+        <li>7×24 案源咨询：秒级响应，不漏夜询</li>
+      </ul>
+      <div class="stats">
+        <div class="stat-item"><div class="val">90%+</div><div class="desc">审查效率提升</div></div>
+        <div class="stat-item"><div class="val">3-4h</div><div class="desc">日均节省劳动</div></div>
+        <div class="stat-item"><div class="val">94%</div><div class="desc">审查准确率</div></div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="product-card" onclick="showDetail('cross')">
+      <h3>跨境智营 <span style="font-size:14px;color:var(--text-secondary);font-weight:400">出海AI增长引擎</span></h3>
+      <p class="subtitle">一个系统，搞定跨境生意的全部线上环节</p>
+      <ul class="features">
+        <li>外部客资营销：主动获客，成本降 60%</li>
+        <li>多平台运营：1 人管 5 平台</li>
+        <li>本土化内容：Listing 转化率提升 35%</li>
+        <li>多语种客服：12 种语言，秒级响应</li>
+      </ul>
+      <div class="stats">
+        <div class="stat-item"><div class="val">5×</div><div class="desc">运营人效提升</div></div>
+        <div class="stat-item"><div class="val">60%</div><div class="desc">获客成本降低</div></div>
+        <div class="stat-item"><div class="val">35%</div><div class="desc">转化率提升</div></div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="product-card" onclick="showDetail('media')">
+      <h3>爆文工厂 <span style="font-size:14px;color:var(--text-secondary);font-weight:400">创作者AI中台</span></h3>
+      <p class="subtitle">一个人，就是一个内容团队</p>
+      <ul class="features">
+        <li>热点选题：选题从 30 分钟 → 30 秒</li>
+        <li>多平台一键生成：1 篇内容，4 个版本</li>
+        <li>智能配图排版：排版 1 小时 → 30 秒</li>
+        <li>数据复盘：数据驱动涨粉</li>
+      </ul>
+      <div class="stats">
+        <div class="stat-item"><div class="val">4-7×</div><div class="desc">产出效率提升</div></div>
+        <div class="stat-item"><div class="val">65%</div><div class="desc">内容成本降低</div></div>
+        <div class="stat-item"><div class="val">6</div><div class="desc">平台全覆盖</div></div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- Why Us -->
+<section class="section section-gray" id="about">
+  <div class="section-header">
+    <h2>为什么选择我们</h2>
+    <p>我们不只做工具，我们让每个行业拥有自己的 AI 系统。</p>
+  </div>
+  <table class="compare-table">
+    <thead><tr><th>对比维度</th><th>传统方式</th><th>我们的 AI 方案</th></tr></thead>
+    <tbody>
+      <tr><td>部署</td><td>需要技术团队、IT 对接、几个月上线</td><td>SaaS 开通即用，1 天跑起来</td></tr>
+      <tr><td>行业适配</td><td>通用工具，需要大量定制</td><td>6 大行业预置方案，开箱匹配</td></tr>
+      <tr><td>数据安全</td><td>云端存储，数据流向不明</td><td>数据本地加密，不做模型训练</td></tr>
+      <tr><td>持续迭代</td><td>买完即止，版本冻结</td><td>大模型每周更新，系统自动变强</td></tr>
+      <tr><td>上手难度</td><td>需要培训、看手册</td><td>自然语言操作，问什么答什么</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Cases -->
+<section class="section" id="cases">
+  <div class="section-header"><h2>客户案例</h2><p>真实场景，真实数据。AI 落地，不说故事，只看结果。</p></div>
+  <div class="case"><h3>某区域百强房企 · 售前智能客服</h3><div class="case-tags"><span class="tag">房地产</span><span class="tag">智能客服</span></div><p>传统靠人海战术的售前模式，正面临成本高昂、效率很低、体验不好的严峻挑战。该房企引入 AI 全媒体联络中心，实现从"人找线索"到"线索找人"的转变。</p><div class="case-metrics"><div class="case-metric"><div class="big">80%</div><div class="small">坐席效率提升</div></div><div class="case-metric"><div class="big">95%</div><div class="small">客户满意度</div></div><div class="case-metric"><div class="big">22×</div><div class="small">线索转化效率</div></div></div></div>
+  <div class="case" style="margin-top:24px"><h3>某汽车集团 · 智能质检系统</h3><div class="case-tags"><span class="tag">汽车</span><span class="tag">质检</span></div><p>100 人客服团队，每日数千通通话量。传统人工抽检仅覆盖不到 3%，超过 95% 的客户互动处于监管盲区。AI 质检系统实现从"事后抽检"到"全量实时监控"的转变。</p><div class="case-metrics"><div class="case-metric"><div class="big">100%</div><div class="small">通话质检覆盖率</div></div><div class="case-metric"><div class="big">-60%</div><div class="small">投诉率下降</div></div><div class="case-metric"><div class="big">即时</div><div class="small">违规预警响应</div></div></div></div>
+</section>
+
+</div><!-- /main-page -->
+
+<!-- ==================== DETAIL: 律智AI ==================== -->
+<div class="detail-page detail-law" id="detail-law">
+  <section class="detail-hero">
+    <div class="icon-circle">&#x2696;</div>
+    <h1>律智AI</h1>
+    <p class="hero-sub">律师智能工作台 - 开庭之外的一切，交给 AI</p>
+    <div class="hero-metrics">
+      <div class="hm-item"><div class="hm-val">3分钟</div><div class="hm-label">生成起诉状</div></div>
+      <div class="hm-item"><div class="hm-val">94%</div><div class="hm-label">审查准确率</div></div>
+      <div class="hm-item"><div class="hm-val">3-4h</div><div class="hm-label">日均节省</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header"><h2>痛点 × 方案</h2><p>每一个律师都在和时间赛跑。我们把跑道清出来。</p></div>
+    <div class="pain-grid">
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4AC;</div>
+          <div class="pain-text"><h4>深夜咨询轰炸</h4><p>凌晨3点当事人发微信问"这个合同能不能签"，你不得不爬起来查法条</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 7×24 AI法律咨询助手</h4>
+          <p>当事人常见问题自动专业回复，复杂问题智能标记待你处理。不用再凌晨起床翻法条，AI先挡一轮。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4C4;</div>
+          <div class="pain-text"><h4>文书反复修改</h4><p>一份起诉状改8遍，立案材料总因格式错误被法院退回</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 智能文书生成 + 法院模板库</h4>
+          <p>输入案情一键生成规范诉状，自动校验立案材料完整性。格式零错误，一次过立案审查。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F50D;</div>
+          <div class="pain-text"><h4>合同肉眼比对</h4><p>10页合同对方改了3处，肉眼对比2小时还漏了隐性风险条款</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 合同智能比对 + 风险扫描</h4>
+          <p>3分钟标出所有差异点，自动提示不利条款和修改建议。隐性风险一个不漏。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-gray">
+    <div class="quote-block">
+      <p>你80%的时间被文书、立案、重复咨询吃掉，只有20%用在真正值钱的庭审策略上。律智AI不是替代律师，是把你从表格和格式里捞出来——起诉状3分钟生成、合同风险自动扫描、当事人深夜咨询AI先挡一轮。开庭前你专注开庭，其他杂事，AI扛了。</p>
+    </div>
+  </section>
+
+  <div style="text-align:center;padding:0 40px 80px">
+    <a href="javascript:void(0)" class="btn-primary" onclick="openModal()" style="font-size:18px;padding:16px 48px">免费试用律智AI</a>
+  </div>
+</div>
+
+<!-- ==================== DETAIL: 跨境智营 ==================== -->
+<div class="detail-page detail-cross" id="detail-cross">
+  <section class="detail-hero">
+    <div class="icon-circle">&#x1F30D;</div>
+    <h1>跨境智营</h1>
+    <p class="hero-sub">出海AI增长引擎 - 一个系统，搞定跨境生意的全部线上环节</p>
+    <div class="hero-metrics">
+      <div class="hm-item"><div class="hm-val">5×</div><div class="hm-label">运营人效提升</div></div>
+      <div class="hm-item"><div class="hm-val">60%</div><div class="hm-label">获客成本降低</div></div>
+      <div class="hm-item"><div class="hm-val">12</div><div class="hm-label">语言全覆盖</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header"><h2>痛点 × 方案</h2><p>出海不是把中文翻译成英文。出海是用 AI 重写规则。</p></div>
+    <div class="pain-grid">
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4C9;</div>
+          <div class="pain-text"><h4>广告投放不精准</h4><p>投了几千美金广告，来的全是印度流量，精准客资转化率不到1%</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; AI客资画像 + 投放优化</h4>
+          <p>自动识别高意向地域人群，广告文案本地化生成，CTR 提升 3 倍。每一分广告费都花在刀刃上。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F310;</div>
+          <div class="pain-text"><h4>深夜客服缺位</h4><p>凌晨2点美国客户问"How to return"，客服 asleep，差评来了</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 12语言AI客服实时在线</h4>
+          <p>覆盖英西法德日等12种语言，自动处理退换货、物流、售后标准问题。24小时不睡觉，好评率稳升。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4E6;</div>
+          <div class="pain-text"><h4>产品描述写不完</h4><p>100个SKU每个要写5版描述，团队3人写了两周还没上架完</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 批量AI产品描述生成</h4>
+          <p>自动适配亚马逊、TikTok、独立站风格，一键优化 SEO 关键词。一天上架200个SKU。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-gray">
+    <div class="section-header"><h2>从获客到售后，AI 流水线</h2></div>
+    <div class="flow-row">
+      <div class="flow-step"><div class="step-num">1</div><h4>AI客资画像</h4><p>识别高意向地域</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">2</div><h4>本地化内容</h4><p>母语级广告+Listing</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">3</div><h4>多语客服</h4><p>12语言24h在线</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">4</div><h4>批量上架</h4><p>200SKU/天</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">5</div><h4>智能复盘</h4><p>自动数据优化</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="quote-block">
+      <p>你的竞品已经用AI一天上架200个SKU，你还在招月薪8千的英语客服三班倒？跨境智营把"海外获客-多语客服-内容生产"整条链路串成自动流水线：广告文案本地化成母语级别，客服24小时不睡觉，产品描述100条批量生成。省下的不是成本，是你抢窗口期的时间。</p>
+    </div>
+  </section>
+
+  <div style="text-align:center;padding:0 40px 80px">
+    <a href="javascript:void(0)" class="btn-accent" onclick="openModal()" style="font-size:18px;padding:16px 48px">免费试用跨境智营</a>
+  </div>
+</div>
+
+<!-- ==================== DETAIL: 爆文工厂 ==================== -->
+<div class="detail-page detail-media" id="detail-media">
+  <section class="detail-hero">
+    <div class="icon-circle">&#x2728;</div>
+    <h1>爆文工厂</h1>
+    <p class="hero-sub">创作者AI中台 - 一个人，就是一个内容团队</p>
+    <div class="hero-metrics">
+      <div class="hm-item"><div class="hm-val">4-7×</div><div class="hm-label">产出效率提升</div></div>
+      <div class="hm-item"><div class="hm-val">65%</div><div class="hm-label">内容成本降低</div></div>
+      <div class="hm-item"><div class="hm-val">30秒</div><div class="hm-label">选题耗时</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header"><h2>痛点 × 方案</h2><p>你不是内容流水线工人。脏活累活，AI全接了。</p></div>
+    <div class="pain-grid">
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4A1;</div>
+          <div class="pain-text"><h4>选题焦虑</h4><p>每天刷3小时热点找选题，写了5篇都没爆，怀疑平台限流</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; AI热点雷达 + 选题预测</h4>
+          <p>实时抓取全平台趋势，结合你的账号定位智能推荐高爆率选题。热点还没上热搜，AI 就推给你。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F504;</div>
+          <div class="pain-text"><h4>多平台改稿地狱</h4><p>一篇稿子改5版适配抖音/小红书/公众号/视频号，改到想弃号</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 一稿多平台智能改写</h4>
+          <p>自动调整文风、字数、标签、封面话术，一键分发四平台。一篇长文自动变短视频脚本 + 小红书图文 + 公众号排版。</p>
+        </div>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-header">
+          <div class="pain-icon">&#x1F4CA;</div>
+          <div class="pain-text"><h4>数据迷宫</h4><p>后台数据一堆，不知道哪篇为什么爆、哪篇为什么死</p></div>
+        </div>
+        <div class="solution-body">
+          <h4>&#x2705; 智能数据复盘</h4>
+          <p>自动拆解爆款因子（标题结构/发布时间/互动点），生成下周优化策略。不看Excel，直接告诉你"下周三要发什么"。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-gray">
+    <div class="section-header"><h2>创作流水线</h2></div>
+    <div class="flow-row">
+      <div class="flow-step"><div class="step-num">1</div><h4>热点雷达</h4><p>30秒锁定爆款选题</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">2</div><h4>一稿多平台</h4><p>4版本一次生成</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">3</div><h4>智能配图排版</h4><p>30秒适配各平台</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">4</div><h4>一键分发</h4><p>5分钟完成全平台</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">5</div><h4>数据复盘</h4><p>AI直接给策略</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="quote-block">
+      <p>你花了70%时间在"找选题-改格式-看数据"上，真正创作的时间被挤成碎片。爆文工厂把这套脏活累活全接了：热点还没上热搜AI就推给你，一篇长文自动变短视频脚本+小红书图文+公众号排版，数据复盘不用看Excel直接给你"下周三要发什么"。你只管写，其他交给流水线。</p>
+    </div>
+  </section>
+
+  <div style="text-align:center;padding:0 40px 80px">
+    <a href="javascript:void(0)" class="btn-accent" onclick="openModal()" style="font-size:18px;padding:16px 48px;background:var(--accent2)">免费试用爆文工厂</a>
+  </div>
+</div>
+
+<!-- CTA (shared) -->
+<section class="cta-section" id="cta">
+  <h2>准备好让 AI 为你的业务加速了吗？</h2>
+  <p>预约产品演示，我们会在 24 小时内联系你。免费试用，无任何绑定。</p>
+  <div class="hero-btns">
+    <a href="javascript:void(0)" class="btn-primary" onclick="openModal()">预约演示（企业方案）</a>
+    <a href="javascript:void(0)" class="btn-outline" onclick="openModal()">免费试用（行业产品）</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>深度觉醒（上海）人工智能技术有限公司 · AI 科技驱动创新增长</p>
+  <p style="margin-top:8px">此页面为预览版，内容由 AI 生成，供内部评审使用。</p>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Industry tabs
+document.querySelectorAll('#industry-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#industry-tabs .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.industry-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('content-' + tab.dataset.industry).classList.remove('hidden');
+  });
+});
+
+// Detail page navigation
+function showDetail(type) {
+  document.getElementById('main-page').style.display = 'none';
+  document.querySelectorAll('.detail-page').forEach(p => p.classList.remove('active'));
+  var detailEl = document.getElementById('detail-' + type);
+  detailEl.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  // Force all fade-up elements in detail page to visible immediately
+  requestAnimationFrame(function() {
+    detailEl.querySelectorAll('.fade-up').forEach(function(el) { el.classList.add('visible'); });
+  });
+}
+
+function showMainPage() {
+  document.querySelectorAll('.detail-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('main-page').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Scroll animations
+function handleScroll() {
+  document.querySelectorAll('.fade-up').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 80) {
+      el.classList.add('visible');
+    }
+  });
+}
+
+// Back to top
+window.addEventListener('scroll', () => {
+  document.getElementById('backTop').style.display = window.scrollY > 600 ? 'flex' : 'none';
+  handleScroll();
+});
+
+// Modal
+var feishuFormUrl = 'https://xcnpizs5rcr0.feishu.cn/share/base/form/shrcn53XGZ777HoxyrKoPkB91Hg';
+
+function openModal() {
+  document.getElementById('bookingModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modalForm').style.display = 'block';
+  document.getElementById('modalSuccess').classList.remove('show');
+  document.getElementById('fieldCompany').value = '';
+  document.getElementById('fieldName').value = '';
+  document.getElementById('fieldPhone').value = '';
+  document.querySelectorAll('.modal .form-group input').forEach(function(el) { el.classList.remove('error'); });
+  document.getElementById('phoneError').classList.remove('show');
+}
+
+function closeModal() {
+  document.getElementById('bookingModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function validatePhone(phone) {
+  return /^1[3-9]\d{9}$/.test(phone);
+}
+
+function submitBooking() {
+  var company = document.getElementById('fieldCompany').value.trim();
+  var name = document.getElementById('fieldName').value.trim();
+  var phone = document.getElementById('fieldPhone').value.trim();
+  var valid = true;
+
+  if (!company) { document.getElementById('fieldCompany').classList.add('error'); valid = false; }
+  else { document.getElementById('fieldCompany').classList.remove('error'); }
+
+  if (!name) { document.getElementById('fieldName').classList.add('error'); valid = false; }
+  else { document.getElementById('fieldName').classList.remove('error'); }
+
+  if (!phone || !validatePhone(phone)) {
+    document.getElementById('fieldPhone').classList.add('error');
+    document.getElementById('phoneError').classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('fieldPhone').classList.remove('error');
+    document.getElementById('phoneError').classList.remove('show');
+  }
+
+  if (!valid) return;
+
+  // 显示成功提示，然后打开飞书表单新标签页
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('modalSuccess').classList.add('show');
+  setTimeout(function() {
+    window.open(feishuFormUrl, '_blank');
+    closeModal();
+  }, 1500);
+}
+
+// Close modal on overlay click
+document.getElementById('bookingModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Init
+handleScroll();
+</script>
+
+<!-- Modal -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <div id="modalForm">
+      <h2>预约演示</h2>
+      <p class="modal-sub">我们会在 24 小时内与您联系，安排专属演示。</p>
+      <div class="form-group"><label>公司名称 *</label><input type="text" id="fieldCompany" placeholder="请输入公司名称"></div>
+      <div class="form-group"><label>姓名 *</label><input type="text" id="fieldName" placeholder="请输入您的姓名"></div>
+      <div class="form-group"><label>手机号码 *</label><input type="tel" id="fieldPhone" placeholder="请输入11位手机号码"><div class="form-error" id="phoneError">请输入正确的11位手机号码</div></div>
+      <button class="btn-submit" onclick="submitBooking()">提交预约</button>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="check-icon">&#10003;</div>
+      <h3>预约已提交</h3>
+      <p>正在跳转到飞书确认页，请在新页面完成最终提交。</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

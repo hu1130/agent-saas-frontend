@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 数字人对话组件演示</title>
+    <link rel="stylesheet" href="./ai-widget.css" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        background: #f6f8fb;
+        color: #172033;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(135deg, rgba(15, 118, 110, 0.1), transparent 34%),
+          linear-gradient(225deg, rgba(245, 158, 11, 0.12), transparent 30%),
+          #f6f8fb;
+      }
+
+      .demo-page {
+        width: min(1080px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 72px 0 160px;
+      }
+
+      .demo-kicker {
+        margin: 0 0 14px;
+        color: #0f766e;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(36px, 6vw, 72px);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .demo-copy {
+        max-width: 640px;
+        margin: 22px 0 0;
+        color: #536179;
+        font-size: 18px;
+        line-height: 1.8;
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 48px;
+      }
+
+      .demo-card {
+        min-height: 118px;
+        border: 1px solid #dbe3ee;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        padding: 20px;
+        box-shadow: 0 16px 44px rgba(23, 32, 51, 0.08);
+      }
+
+      .demo-card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .demo-card span {
+        color: #667085;
+        line-height: 1.65;
+      }
+
+      @media (max-width: 760px) {
+        .demo-page {
+          width: min(100% - 28px, 1080px);
+          padding-top: 44px;
+        }
+
+        .demo-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="demo-page">
+      <p class="demo-kicker">AI DIGITAL HUMAN WIDGET</p>
+      <h1>官网 AI 智能对话二维数字人</h1>
+      <p class="demo-copy">
+        这是一个可直接接入官网的右下角悬浮组件，已包含二维数字人形象、对话窗口、快捷问题、基础动效和接口接入位。
+      </p>
+
+      <section class="demo-grid" aria-label="组件能力">
+        <article class="demo-card">
+          <strong>品牌化形象</strong>
+          <span>半身二维数字人，适合科技、企业服务、AI 产品官网。</span>
+        </article>
+        <article class="demo-card">
+          <strong>可接真实接口</strong>
+          <span>在配置里填入自己的后端接口即可替换演示回复。</span>
+        </article>
+        <article class="demo-card">
+          <strong>轻量嵌入</strong>
+          <span>原生 HTML/CSS/JS，无框架依赖，适合快速放进现有官网。</span>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      window.AI_DIGITAL_HUMAN_CONFIG = {
+        brandName: "AI 智能助手",
+        greeting: "你好，我是官网 AI 助手。你可以问我产品、方案、价格或预约演示。",
+        presenceTitle: "你好，我在这里",
+        presenceMessage: "我是你的 AI 数字人助手，有问题可以直接问我。",
+        avatar: "./assets/ai-digital-human.png",
+        endpoint: ""
+      };
+    </script>
+    <script src="./ai-widget.js"></script>
+  </body>
+</html>
