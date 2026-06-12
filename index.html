@@ -357,15 +357,15 @@
                 <label class="wide">核心卖点<textarea name="selling_points" rows="3" placeholder="例如：客服自动化、知识库问答、ERP/OA 对接、短视频获客引流"></textarea></label>
                 <div class="form-row">
                   <label>发布平台<select name="platform"><option>抖音</option><option>视频号</option><option>小红书</option><option>B站</option></select></label>
-                  <label>视频时长<input type="number" name="video_duration" min="3" max="180" value="5" /></label>
+                  <label>视频时长<input type="number" name="video_duration" min="30" max="600" value="30" /></label>
                 </div>
                 <div class="form-row">
                   <label>文案数量<input type="number" name="copy_count" min="1" max="5" value="3" /></label>
                   <label>图片数量<input type="number" name="image_count" min="0" max="4" value="2" /></label>
                 </div>
-                <label class="checkbox-line"><input type="checkbox" name="generate_video" checked /> 同时生成视频</label>
-                <button class="btn-primary" type="submit">生成获客短视频</button>
-                <p class="video-agent-hint">生成视频可能需要几十秒到数分钟。正式上线后这里会接入登录、充值、额度扣减和生成记录。</p>
+                <p class="video-flow-note">分阶段生成：先提示词，再图片，再视频</p>
+                <button class="btn-primary" type="submit">生成可编辑提示词</button>
+                <p class="video-agent-hint">支持先修改提示词，再重生成图片或视频。视频会按 15 秒左右片段生成并自动拼接。</p>
               </form>
               <section class="video-agent-result" aria-live="polite">
                 <div class="video-result-top">
@@ -384,7 +384,7 @@
     </section>
 
     <footer class="footer">
-      <p>深度觉醒（上海）人工智能技术有限公司 · AI 科技驱动创新增长</p>
+      <p>深度觉醒（上海）人工智能科技有限公司 · AI 科技驱动创新增长</p>
     </footer>
 
     <button class="back-top" type="button" data-back-top>↑</button>
@@ -417,6 +417,11 @@
         presenceTitle: "你好，我在这里",
         presenceMessage: "想知道哪类智能体适合你？点我聊聊。",
         avatar: "assets/ai-digital-human.png",
+        avatars: [
+          "assets/ai-avatar-consultant.png",
+          "assets/ai-avatar-strategist.png",
+          "assets/ai-avatar-operator.png"
+        ],
         endpoint: "",
         quickQuestions: ["我们有哪些智能体？", "律师适合哪个产品？", "跨境电商怎么用？", "预约演示"]
       };

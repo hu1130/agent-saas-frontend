@@ -5,38 +5,54 @@
     presenceTitle: "你好，我在这里",
     presenceMessage: "想知道哪类智能体适合你？点我聊聊。",
     avatar: "assets/ai-digital-human.png",
+    figure: "assets/ai-halfbody-consultant.png",
+    figures: [
+      "assets/ai-halfbody-consultant.png",
+      "assets/ai-halfbody-strategist.png",
+      "assets/ai-halfbody-operator.png"
+    ],
+    avatars: [
+      "assets/ai-avatar-consultant.png",
+      "assets/ai-avatar-strategist.png",
+      "assets/ai-avatar-operator.png"
+    ],
     endpoint: "",
     quickQuestions: ["我们有哪些智能体？", "律师适合哪个产品？", "跨境电商怎么用？", "预约演示"]
   };
 
   const config = Object.assign({}, defaults, window.AI_DIGITAL_HUMAN_CONFIG || {});
+  const avatarPool = Array.isArray(config.avatars) && config.avatars.length ? config.avatars : [config.avatar];
+  const figurePool = Array.isArray(config.figures) && config.figures.length ? config.figures : [config.figure];
+  const personaIndex = Math.floor(Math.random() * Math.max(figurePool.length, avatarPool.length));
+  config.figure = figurePool[personaIndex % figurePool.length] || config.figure;
+  config.avatar = avatarPool[personaIndex % avatarPool.length] || config.avatar;
   const icons = {
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
-    send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>'
+    send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
+    expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="M9 21H3v-6"/><path d="m3 21 7-7"/></svg>',
+    collapse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v5H3"/><path d="m3 8 6-6"/><path d="M16 21v-5h5"/><path d="m21 16-6 6"/></svg>'
   };
 
   const widget = document.createElement("section");
   widget.className = "ai-human-widget";
   widget.setAttribute("aria-label", config.brandName);
   widget.innerHTML = `
+    <button class="ai-human-presence" type="button" aria-label="打开${escapeHtml(config.brandName)}">
+      <span class="ai-human-presence-frame">
+        <img class="ai-human-presence-image" src="${config.figure}" alt="" />
+      </span>
+      <span class="ai-human-presence-bubble">
+        <strong>${escapeHtml(config.presenceTitle)}</strong>
+        ${escapeHtml(config.presenceMessage)}
+      </span>
+    </button>
+    <button class="ai-human-size" type="button" aria-label="缩小数字人">${icons.collapse}</button>
     <button class="ai-human-launcher" type="button" aria-label="打开${escapeHtml(config.brandName)}">
       <img class="ai-human-launcher-avatar" src="${config.avatar}" alt="" />
       <span class="ai-human-launcher-label">
         <strong>${escapeHtml(config.brandName)}</strong>
         <span>在线为你解答</span>
       </span>
-    </button>
-    <button class="ai-human-presence" type="button" aria-label="打开${escapeHtml(config.brandName)}">
-      <span class="ai-human-presence-bubble">
-        <strong>${escapeHtml(config.presenceTitle)}</strong>
-        ${escapeHtml(config.presenceMessage)}
-      </span>
-      <span class="ai-human-presence-body" aria-hidden="true">
-        <img src="${config.avatar}" alt="" />
-        <span class="ai-human-presence-eyelid left"></span>
-        <span class="ai-human-presence-eyelid right"></span>
-      </span>
-      <span class="ai-human-presence-cta">点我咨询</span>
     </button>
     <div class="ai-human-panel" role="dialog" aria-label="${escapeHtml(config.brandName)}">
       <div class="ai-human-hero">
@@ -63,8 +79,10 @@
 
   document.body.appendChild(widget);
 
-  const launcher = widget.querySelector(".ai-human-launcher");
+  const sizeKey = "aiHumanDisplayMode";
   const presence = widget.querySelector(".ai-human-presence");
+  const sizeButton = widget.querySelector(".ai-human-size");
+  const launcher = widget.querySelector(".ai-human-launcher");
   const close = widget.querySelector(".ai-human-close");
   const messages = widget.querySelector(".ai-human-messages");
   const quick = widget.querySelector(".ai-human-quick");
@@ -82,8 +100,14 @@
     quick.appendChild(button);
   });
 
-  launcher.addEventListener("click", openPanel);
+  if (window.localStorage.getItem(sizeKey) === "mini") {
+    widget.classList.add("is-mini");
+  }
+  updateSizeButton();
+
   presence.addEventListener("click", openPanel);
+  launcher.addEventListener("click", openPanel);
+  sizeButton.addEventListener("click", toggleDisplayMode);
   close.addEventListener("click", () => widget.classList.remove("is-open"));
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -93,6 +117,19 @@
   function openPanel() {
     widget.classList.add("is-open");
     window.setTimeout(() => input.focus(), 140);
+  }
+
+  function toggleDisplayMode(event) {
+    event.stopPropagation();
+    widget.classList.toggle("is-mini");
+    window.localStorage.setItem(sizeKey, widget.classList.contains("is-mini") ? "mini" : "large");
+    updateSizeButton();
+  }
+
+  function updateSizeButton() {
+    const isMini = widget.classList.contains("is-mini");
+    sizeButton.innerHTML = isMini ? icons.expand : icons.collapse;
+    sizeButton.setAttribute("aria-label", isMini ? "放大数字人" : "缩小数字人");
   }
 
   async function submitMessage(text) {

@@ -329,25 +329,18 @@ renderPainGrids();
   const title = document.querySelector("[data-video-result-title]");
   const status = document.querySelector("[data-video-status]");
   const output = document.querySelector("[data-video-output]");
-  const apiBase = window.VIDEO_AGENT_API_BASE || "http://127.0.0.1:8888";
+  const apiBase = window.VIDEO_AGENT_API_BASE || "http://127.0.0.1:8890";
+  let currentPayload = null;
+  let currentPromptResult = null;
+  let currentImages = [];
+  let currentVideos = [];
+  let stageState = { prompts: "idle", images: "idle", video: "idle" };
+  let stageMessage = "填写企业信息后，先生成提示词，再生成图片和视频。";
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = form.querySelector("button[type='submit']");
-    const data = new FormData(form);
-    const payload = {
-      company_name: String(data.get("company_name") || "").trim(),
-      industry: String(data.get("industry") || "").trim(),
-      product_name: String(data.get("product_name") || "").trim(),
-      selling_points: String(data.get("selling_points") || "").trim(),
-      platform: String(data.get("platform") || "抖音"),
-      goal: "短视频获客引流",
-      tone: "专业可信",
-      copy_count: Number(data.get("copy_count") || 3),
-      image_count: Number(data.get("image_count") || 0),
-      video_duration: Number(data.get("video_duration") || 5),
-      generate_video: data.get("generate_video") === "on",
-    };
+    const payload = getVideoPayload();
 
     if (!payload.product_name && !payload.selling_points) {
       setVideoState("待补充", "请至少填写产品/服务或核心卖点。", true);
@@ -355,26 +348,64 @@ renderPainGrids();
     }
 
     button.disabled = true;
-    setVideoState("生成中", "正在生成文案、图片和视频，请稍等...", true);
-    title.textContent = "正在调用 AI 短视频获客 Agent";
+    currentPayload = payload;
+    currentPromptResult = null;
+    currentImages = [];
+    currentVideos = [];
+    stageState = { prompts: "running", images: "idle", video: "idle" };
+    stageMessage = "正在生成可编辑的视频提示词和分镜...";
+    renderPromptWorkspace();
+    title.textContent = "正在生成视频提示词";
 
     try {
-      const response = await fetch(`${apiBase}/api/video-agent/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.detail || "生成失败");
-      status.textContent = "已完成";
-      renderVideoAgentResult(result, apiBase);
+      await generateEditablePrompts();
     } catch (error) {
       title.textContent = "生成失败";
-      setVideoState("失败", `请确认 FastAPI 已启动、密钥已配置。错误信息：${error.message}`, true);
+      markCurrentStageFailed(`请确认 FastAPI 已启动、密钥已配置。错误信息：${error.message}`);
     } finally {
       button.disabled = false;
     }
   });
+
+  output.addEventListener("click", async (event) => {
+    const action = event.target.closest("[data-video-action]")?.dataset.videoAction;
+    if (!action || !currentPayload) return;
+    try {
+      if (action === "regenerate-prompts") {
+        stageState = { prompts: "running", images: "idle", video: "idle" };
+        stageMessage = "正在重新生成提示词...";
+        currentImages = [];
+        currentVideos = [];
+        renderPromptWorkspace();
+        await generateEditablePrompts();
+      }
+      if (action === "generate-images") {
+        await generateImagesFromCurrentPrompts();
+      }
+      if (action === "generate-video") {
+        await generateVideoFromCurrentPrompt();
+      }
+    } catch (error) {
+      markCurrentStageFailed(error.message);
+    }
+  });
+
+  function getVideoPayload() {
+    const data = new FormData(form);
+    return {
+      company_name: String(data.get("company_name") || "").trim(),
+      industry: String(data.get("industry") || "").trim(),
+      product_name: String(data.get("product_name") || "").trim(),
+      selling_points: String(data.get("selling_points") || "").trim(),
+      platform: String(data.get("platform") || "抖音"),
+      goal: "视频获客引流",
+      tone: "真人实拍、专业可信",
+      copy_count: Number(data.get("copy_count") || 1),
+      image_count: Number(data.get("image_count") || 2),
+      video_duration: Math.max(30, Math.min(600, Number(data.get("video_duration") || 30))),
+      generate_video: false,
+    };
+  }
 
   function setVideoState(nextStatus, message, isEmpty) {
     status.textContent = nextStatus;
@@ -382,39 +413,217 @@ renderPainGrids();
     output.textContent = message;
   }
 
-  function renderVideoAgentResult(result, apiBase) {
-    const plans = result.copywriting || [];
-    const images = result.images || [];
-    const videos = result.videos || [];
-    const first = plans[0] || {};
-    title.textContent = first.title || result.topic || "生成完成";
+  function markCurrentStageFailed(message) {
+    if (stageState.video === "running") stageState.video = "failed";
+    else if (stageState.images === "running") stageState.images = "failed";
+    else stageState.prompts = "failed";
+    stageMessage = message;
+    status.textContent = "失败";
+    renderPromptWorkspace([message]);
+  }
 
-    const plansHtml = plans.map((plan, index) => `
-      <article class="video-copy-card">
-        <span>方案 ${index + 1}</span>
-        <h4>${escapeVideoHtml(plan.title || "未命名方案")}</h4>
-        <p><b>开场：</b>${escapeVideoHtml(plan.hook || plan.subtitle || "")}</p>
-        <p><b>文案：</b>${escapeVideoHtml(plan.caption || plan.description || "")}</p>
-        <p><b>标签：</b>${(plan.hashtags || []).map(escapeVideoHtml).join(" ")}</p>
-      </article>
-    `).join("");
+  async function generateEditablePrompts() {
+    const response = await fetch(`${apiBase}/api/video-agent/prompts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentPayload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "提示词生成失败");
+    currentPromptResult = result;
+    stageState.prompts = "done";
+    stageMessage = "提示词已生成。你可以直接修改提示词，或重新生成。";
+    status.textContent = "提示词完成";
+    renderPromptWorkspace();
+  }
 
-    const imageHtml = images.length
-      ? `<div class="video-asset-grid">${images.map((item) => `<figure><img src="${item.url}" alt="${escapeVideoHtml(item.label)}"><figcaption>${escapeVideoHtml(item.label)}</figcaption></figure>`).join("")}</div>`
+  async function generateImagesFromCurrentPrompts() {
+    stageState.images = "running";
+    stageState.video = currentVideos.length ? "done" : "idle";
+    stageMessage = "正在按当前图片提示词生成图片...";
+    status.textContent = "图片生成中";
+    renderPromptWorkspace();
+    const imagePrompts = getImagePrompts();
+    currentPromptResult = { ...currentPromptResult, image_prompts: imagePrompts, video_prompt: getVideoPrompt() };
+    const response = await fetch(`${apiBase}/api/video-agent/images/regenerate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...currentPayload, image_prompts: imagePrompts, image_count: currentPayload.image_count }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "图片生成失败");
+    currentImages = result.images || [];
+    stageState.images = "done";
+    stageState.video = currentVideos.length ? "done" : "idle";
+    stageMessage = "图片已生成。不满意可以改提示词后重新生成图片。";
+    status.textContent = "图片完成";
+    renderPromptWorkspace(result.warnings || []);
+  }
+
+  async function generateVideoFromCurrentPrompt() {
+    if (!currentImages.length) {
+      throw new Error("请先生成图片，再用图片和提示词生成视频。");
+    }
+    stageState.video = "running";
+    stageMessage = "正在按当前视频提示词和图片生成视频片段，并在完成后自动拼接...";
+    status.textContent = "视频生成中";
+    renderPromptWorkspace();
+    currentPromptResult = { ...currentPromptResult, video_prompt: getVideoPrompt(), image_prompts: getImagePrompts() };
+    const response = await fetch(`${apiBase}/api/video-agent/videos/regenerate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...currentPayload,
+        video_prompt: getVideoPrompt(),
+        images: currentImages,
+        generate_video: true,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "视频生成失败");
+    currentVideos = result.videos || [];
+    stageState.video = "done";
+    stageMessage = "视频已生成。不满意可以继续改提示词、换图片或重新生成视频。";
+    status.textContent = "视频完成";
+    renderPromptWorkspace(result.warnings || []);
+  }
+
+  function renderPromptWorkspace(warnings = []) {
+    const result = currentPromptResult || {};
+    const first = (result.copywriting || [])[0] || {};
+    title.textContent = first.title || result.topic || "提示词已生成";
+    const imagePrompts = result.image_prompts || [];
+    const warningsHtml = warnings.length ? `<div class="video-warning">${warnings.map(escapeVideoHtml).join("<br>")}</div>` : "";
+    const imagePromptHtml = renderImagePromptCards(imagePrompts);
+    const imageHtml = currentImages.length
+      ? `<div class="video-asset-grid">${currentImages.map((item) => `<figure><img src="${item.url}" alt="${escapeVideoHtml(item.label)}"><figcaption>${escapeVideoHtml(item.label)}</figcaption></figure>`).join("")}</div>`
       : "";
-    const videoItems = videos.length ? videos : result.video_url ? [{ url: result.video_url, label: "生成视频" }] : [];
-    const videoHtml = videoItems.length
-      ? `<div class="video-file-list">${videoItems.map((item) => {
+    const videoHtml = currentVideos.length
+      ? `<div class="video-file-list">${currentVideos.map((item) => {
           const src = item.url.startsWith("http") ? `${apiBase}/api/video-proxy?url=${encodeURIComponent(item.url)}` : `${apiBase}${item.url}`;
           return `<article><h4>${escapeVideoHtml(item.label)}</h4><video controls src="${src}"></video><a href="${src}" target="_blank" rel="noreferrer">打开视频</a></article>`;
         }).join("")}</div>`
       : "";
-    const warningHtml = (result.warnings || []).length
-      ? `<div class="video-warning">${result.warnings.map(escapeVideoHtml).join("<br>")}</div>`
-      : "";
 
     output.className = "video-output";
-    output.innerHTML = `${warningHtml}${plansHtml}${imageHtml}${videoHtml}`;
+    output.innerHTML = `
+      ${renderStageProgress()}
+      ${warningsHtml}
+      <section class="video-stage-panel ${stageState.prompts === "running" ? "is-active" : ""}">
+        <div class="video-stage-head">
+          <div>
+            <span>阶段 1</span>
+            <h4>提示词和脚本</h4>
+          </div>
+          <button class="btn-outline" type="button" data-video-action="regenerate-prompts" ${stageState.prompts === "running" ? "disabled" : ""}>${currentPromptResult ? "重新生成提示词" : "生成中"}</button>
+        </div>
+        <article class="video-copy-card">
+        <span>文案</span>
+        <h4>${escapeVideoHtml(first.title || "视频方案")}</h4>
+        <p><b>开场：</b>${escapeVideoHtml(first.hook || first.subtitle || "")}</p>
+        <p><b>脚本：</b>${escapeVideoHtml(first.caption || first.description || "")}</p>
+        </article>
+        <label class="video-prompt-editor">
+          <span>视频提示词（可手动修改后生成/重生成视频）</span>
+          <textarea data-video-prompt="video" rows="9">${escapeVideoHtml(result.video_prompt || first.videoPrompt || "")}</textarea>
+        </label>
+      </section>
+      <section class="video-stage-panel ${stageState.images === "running" ? "is-active" : ""}">
+        <div class="video-stage-head">
+          <div>
+            <span>阶段 2</span>
+            <h4>参考图素材</h4>
+          </div>
+          <button class="btn-outline" type="button" data-video-action="generate-images" ${currentPromptResult && stageState.images !== "running" ? "" : "disabled"}>${stageState.images === "running" ? "图片生成中" : currentImages.length ? "重新生成图片" : "生成图片"}</button>
+        </div>
+      <div class="video-stage-guide">先用角色、场景、产品参考图锁定一致性；首帧卡片用于每个视频片段的开头画面。点卡片可展开修改。</div>
+      ${imagePromptHtml}
+      ${imageHtml}
+      </section>
+      <section class="video-stage-panel ${stageState.video === "running" ? "is-active" : ""}">
+        <div class="video-stage-head">
+          <div>
+            <span>阶段 3</span>
+            <h4>视频生成</h4>
+          </div>
+          <button class="btn-primary" type="button" data-video-action="generate-video" ${currentImages.length && stageState.video !== "running" ? "" : "disabled"}>${stageState.video === "running" ? "视频生成中" : currentVideos.length ? "重新生成视频" : "生成视频"}</button>
+        </div>
+      ${videoHtml}
+      </section>
+    `;
+  }
+
+  function renderImagePromptCards(prompts) {
+    if (!prompts.length) {
+      return `<div class="video-stage-empty">提示词生成后，这里会出现角色、场景、产品和首帧参考图。</div>`;
+    }
+    return `<div class="video-reference-grid">${prompts.map((prompt, index) => {
+      const meta = getReferenceMeta(prompt, index);
+      return `
+        <details class="video-reference-card" ${index < 3 ? "" : ""}>
+          <summary>
+            <span>${escapeVideoHtml(meta.type)}</span>
+            <strong>${escapeVideoHtml(meta.title)}</strong>
+            <small>${escapeVideoHtml(meta.desc)}</small>
+          </summary>
+          <label class="video-prompt-editor compact">
+            <span>可编辑提示词</span>
+            <textarea data-video-prompt="image" rows="4">${escapeVideoHtml(prompt)}</textarea>
+          </label>
+        </details>
+      `;
+    }).join("")}</div>`;
+  }
+
+  function getReferenceMeta(prompt, index) {
+    const value = String(prompt || "");
+    if (index === 0 || value.includes("角色参考图")) {
+      return { type: "角色", title: "固定主角形象", desc: "锁定五官、服装、职业气质" };
+    }
+    if (index === 1 || value.includes("场景参考图")) {
+      return { type: "场景", title: "固定拍摄地点", desc: "锁定空间、光线、道具位置" };
+    }
+    if (index === 2 || value.includes("产品参考图")) {
+      return { type: "产品", title: "固定产品与界面", desc: "锁定产品外观和使用方式" };
+    }
+    return { type: "首帧", title: `镜头首帧 ${index - 2}`, desc: "作为视频片段的 first frame" };
+  }
+
+  function renderStageProgress() {
+    const stages = [
+      ["prompts", "导演方案", "总提示词 + shot list"],
+      ["images", "参考图", "角色/场景/产品/首帧"],
+      ["video", "成片", "逐镜头生成并拼接"],
+    ];
+    return `
+      <div class="video-stage-progress">
+        ${stages.map(([key, label, desc], index) => `
+          <div class="video-stage-step ${stageState[key]}" data-step="${index + 1}">
+            <strong>${label}</strong>
+            <span>${stageText(stageState[key])}</span>
+            <small>${desc}</small>
+          </div>
+        `).join("")}
+      </div>
+      <div class="video-stage-message">${escapeVideoHtml(stageMessage)}</div>
+    `;
+  }
+
+  function stageText(value) {
+    if (value === "running") return "生成中";
+    if (value === "done") return "已完成";
+    if (value === "failed") return "失败";
+    return "等待";
+  }
+
+  function getVideoPrompt() {
+    return output.querySelector("[data-video-prompt='video']")?.value.trim() || "";
+  }
+
+  function getImagePrompts() {
+    return Array.from(output.querySelectorAll("[data-video-prompt='image']"))
+      .map((item) => item.value.trim())
+      .filter(Boolean);
   }
 
   function escapeVideoHtml(value) {
