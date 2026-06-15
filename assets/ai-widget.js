@@ -21,6 +21,9 @@
   };
 
   const config = Object.assign({}, defaults, window.AI_DIGITAL_HUMAN_CONFIG || {});
+  if (!config.endpoint) {
+    config.endpoint = "http://127.0.0.1:8890/api/customer-service/chat";
+  }
   const avatarPool = Array.isArray(config.avatars) && config.avatars.length ? config.avatars : [config.avatar];
   const figurePool = Array.isArray(config.figures) && config.figures.length ? config.figures : [config.figure];
   const personaIndex = Math.floor(Math.random() * Math.max(figurePool.length, avatarPool.length));
@@ -139,7 +142,7 @@
     setSpeaking(true);
     try {
       const answer = await getAnswer(text);
-      addMessage(answer, "bot");
+      await addBotAnswer(answer);
     } catch {
       addMessage("抱歉，当前智能服务暂时不可用。你也可以点击官网的“预约演示”，我们会安排顾问跟进。", "bot");
     } finally {
@@ -152,14 +155,41 @@
       const response = await fetch(config.endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({
+          message: text,
+          session_id: getSessionId(),
+          api_key: config.apiKey || ""
+        })
       });
       if (!response.ok) throw new Error("AI endpoint failed");
       const data = await response.json();
+      if (Array.isArray(data.messages) && data.messages.length) return data.messages;
       return data.answer || data.message || "我已收到你的问题，会继续为你整理答案。";
     }
     await wait(520);
     return demoReply(text);
+  }
+
+  async function addBotAnswer(answer) {
+    if (Array.isArray(answer)) {
+      for (const item of answer) {
+        const delay = Number(item.delay_ms || 0);
+        if (delay > 0) await wait(Math.min(delay, 2200));
+        addMessage(item.text || item.message || String(item), "bot");
+      }
+      return;
+    }
+    addMessage(answer, "bot");
+  }
+
+  function getSessionId() {
+    const key = "aiHumanSessionId";
+    let sessionId = window.localStorage.getItem(key);
+    if (!sessionId) {
+      sessionId = `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      window.localStorage.setItem(key, sessionId);
+    }
+    return sessionId;
   }
 
   function demoReply(text) {

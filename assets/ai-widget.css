@@ -66,27 +66,6 @@
   box-shadow: none;
 }
 
-.ai-human-presence-frame::after {
-  content: "";
-  position: absolute;
-  inset: auto 34px 3px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.72), transparent);
-  filter: blur(1px);
-  animation: aiPresenceFloorPulse 2.8s ease-in-out infinite;
-}
-
-.ai-human-presence-frame::before {
-  content: "";
-  position: absolute;
-  inset: 12px 20px auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.44), transparent);
-  opacity: 0.62;
-  transform: translateY(0);
-  animation: aiPresenceScan 4.2s linear infinite;
-}
-
 .ai-human-presence-image {
   position: absolute;
   left: 50%;
@@ -131,27 +110,50 @@
 
 .ai-human-size {
   position: absolute;
-  right: 6px;
-  bottom: 296px;
+  right: 8px;
+  bottom: 286px;
   display: inline-grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(125, 211, 252, 0.36);
-  border-radius: 50%;
-  background: rgba(2, 8, 23, 0.72);
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(221, 249, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(32, 58, 79, 0.78);
   color: #dff7ff;
-  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.24);
+  box-shadow:
+    0 14px 30px rgba(2, 6, 23, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   cursor: pointer;
-  backdrop-filter: blur(12px);
+  overflow: hidden;
+  backdrop-filter: blur(14px);
   transition:
     transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
     box-shadow 180ms ease;
+}
+
+.ai-human-size::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.ai-human-size::after {
+  display: none;
 }
 
 .ai-human-size:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 22px rgba(56, 189, 248, 0.22);
+  border-color: rgba(125, 211, 252, 0.58);
+  background: rgba(42, 76, 100, 0.86);
+  box-shadow:
+    0 16px 34px rgba(2, 6, 23, 0.32),
+    0 0 18px rgba(56, 189, 248, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .ai-human-widget.is-mini .ai-human-launcher {
@@ -159,8 +161,11 @@
 }
 
 .ai-human-size svg {
-  width: 17px;
-  height: 17px;
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  filter: none;
 }
 
 .ai-human-launcher {
@@ -630,36 +635,6 @@
   }
 }
 
-@keyframes aiPresenceFloorPulse {
-  0%,
-  100% {
-    opacity: 0.62;
-    transform: scaleX(0.86);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scaleX(1.04);
-  }
-}
-
-@keyframes aiPresenceScan {
-  from {
-    transform: translateY(0);
-    opacity: 0;
-  }
-
-  12%,
-  76% {
-    opacity: 0.55;
-  }
-
-  to {
-    transform: translateY(240px);
-    opacity: 0;
-  }
-}
-
 @keyframes aiLauncherPulse {
   0%,
   100% {
@@ -681,8 +656,6 @@
   .ai-human-presence,
   .ai-human-presence-image,
   .ai-human-presence-bubble,
-  .ai-human-presence-frame::before,
-  .ai-human-presence-frame::after,
   .ai-human-widget.is-mini .ai-human-launcher {
     animation: none;
   }

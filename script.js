@@ -14,11 +14,31 @@ const consoleKicker = document.querySelector("[data-console-kicker]");
 const consoleTitle = document.querySelector("[data-console-title]");
 const consoleCopy = document.querySelector("[data-console-copy]");
 const consoleFlow = document.querySelector("[data-console-flow]");
+const agentDetailTitle = document.querySelector("[data-agent-detail-title]");
+const agentDetailIcon = document.querySelector("[data-agent-detail-icon]");
+const agentDetailCopy = document.querySelector("[data-agent-detail-copy]");
+const agentDetailKicker = document.querySelector("[data-agent-detail-kicker]");
+const agentDetailHeading = document.querySelector("[data-agent-detail-heading]");
+const agentDetailBody = document.querySelector("[data-agent-detail-body]");
+const agentDetailFlow = document.querySelector("[data-agent-detail-flow]");
+const agentDetailDemo = document.querySelector("[data-agent-detail-demo]");
+const agentDetailList = document.querySelector("[data-agent-detail-list]");
 const backTop = document.querySelector("[data-back-top]");
 const modal = document.querySelector("[data-modal]");
 const modalForm = document.querySelector("[data-modal-form]");
 const modalSuccess = document.querySelector("[data-modal-success]");
 const formError = document.querySelector("[data-form-error]");
+const bookingAgentList = document.querySelector("[data-booking-agent-list]");
+const selectedBookingAgents = new Set();
+const BOOKING_API_BASE = window.BOOKING_API_BASE || window.VIDEO_AGENT_API_BASE || "http://127.0.0.1:8890";
+const AGENT_APP_LINKS = Object.assign({
+  doc: "",
+  risk: "",
+  service: "",
+  content: "",
+  trend: "",
+  video: "",
+}, window.AGENT_APP_LINKS || {});
 
 const solutions = {
   mfg: {
@@ -125,7 +145,84 @@ const agents = {
     copy: "它不是写稿工具，而是内容雷达：监测热点、匹配账号定位，并把选题、标题和脚本角度提前推给创作者。",
     flow: ["抓取平台趋势", "匹配账号定位", "输出选题、标题和脚本角度"],
   },
+  video: {
+    signal: "短视频获客智能体正在生成获客内容方案",
+    kicker: "短视频获客智能体",
+    title: "把企业卖点变成可发布、可获客的短视频资产",
+    copy: "它负责把公司介绍、行业痛点、产品卖点拆成短视频选题、脚本、分镜、图片提示词和视频片段，适合企业做抖音、视频号、小红书获客。",
+    flow: ["拆解获客卖点", "生成脚本分镜", "输出图片提示词与视频片段"],
+  },
 };
+
+const agentIcons = {
+  doc: "📄",
+  risk: "🛡️",
+  service: "🎧",
+  content: "📦",
+  trend: "📡",
+  video: "🎬",
+};
+
+const agentDemos = {
+  doc: {
+    role: "把零散材料变成可交付文档，适合法务、销售、运营、行政等高频写作场景。",
+    scenarios: ["合同初稿", "起诉状/律师函", "项目方案", "会议纪要", "投标材料"],
+    steps: ["上传或粘贴业务材料", "选择文档类型和行业模板", "AI 生成结构化初稿", "人工确认关键事实后一键导出"],
+    input: "客户拖欠 38 万货款，合同约定逾期违约金每日万分之五，需生成一份催款律师函。",
+    output: "生成律师函正文、事实摘要、法律依据、付款期限、证据清单和可修改版本。",
+    value: ["起草时间从 2 小时降到 5 分钟", "统一企业文档格式", "降低漏项和格式错误"]
+  },
+  risk: {
+    role: "提前发现合同、流程、投放和售后规则里的隐性风险，给出风险等级和修改建议。",
+    scenarios: ["合同条款审查", "广告合规审查", "售后规则审查", "投放素材风控", "流程漏洞扫描"],
+    steps: ["上传合同/规则/素材", "选择审查标准", "AI 标记风险条款", "输出修改建议和人工确认项"],
+    input: "审查一份渠道代理合同，重点关注独家授权、回款周期、违约责任和数据归属。",
+    output: "标记 7 个风险点，其中 2 个高风险；输出替换条款、风险原因和谈判建议。",
+    value: ["把人工初审压缩到分钟级", "避免隐性霸王条款", "让非专业人员也能看懂风险"]
+  },
+  service: {
+    role: "接住官网、私域、电商平台的客户咨询，自动回答常见问题，并把高价值线索分流给销售。",
+    scenarios: ["售前咨询", "售后退换货", "物流查询", "多语言问答", "线索分级"],
+    steps: ["导入企业知识库", "配置常见问题和转人工规则", "接入官网/企微/电商渠道", "自动记录对话和客户意向"],
+    input: "客户问：你们的 AI 智能体适合律师事务所吗？能不能先看演示？",
+    output: "自动回答适用方案，推荐律师智能体，并把客户标记为高意向预约线索。",
+    value: ["7x24 小时在线", "减少重复客服人力", "让销售优先跟进高意向客户"]
+  },
+  content: {
+    role: "把商品参数、卖点和平台要求变成可上架、可投放、可复用的内容资产。",
+    scenarios: ["SKU 标题生成", "详情页文案", "小红书/抖音种草", "多语言 Listing", "短视频脚本"],
+    steps: ["录入产品参数和目标平台", "选择内容风格", "AI 批量生成多个版本", "人工挑选后发布或继续改写"],
+    input: "一款便携式筋膜枪，目标用户是办公室久坐人群，要生成抖音口播脚本和电商详情页卖点。",
+    output: "输出 5 条标题、6 个核心卖点、详情页结构、短视频开场钩子和口播脚本。",
+    value: ["批量内容生产", "保持品牌语气统一", "减少运营重复改稿"]
+  },
+  trend: {
+    role: "监测热点、账号定位和竞品内容，提前给出更容易爆的选题、标题和脚本角度。",
+    scenarios: ["热点监控", "账号选题库", "爆款标题", "脚本角度", "竞品内容复盘"],
+    steps: ["设置行业和账号定位", "抓取平台趋势和竞品内容", "AI 生成选题评分", "输出标题、开场和脚本方向"],
+    input: "账号定位是企业 AI 工具科普，目标客户是中小企业老板，想找本周适合拍的短视频选题。",
+    output: "输出 12 个选题，按爆发潜力排序，并给出标题、开场 3 秒钩子和拍摄建议。",
+    value: ["减少选题焦虑", "让内容更贴近热点", "提前规划一周内容日历"]
+  },
+  video: {
+    role: "把企业服务、行业痛点和核心卖点转成短视频获客素材，按提示词、图片、视频片段分阶段生成。",
+    scenarios: ["企业服务获客", "知识科普口播", "客户案例短片", "产品功能演示", "私域引流视频"],
+    steps: ["填写公司、行业、产品和卖点", "AI 生成选题、脚本和分镜", "人工修改提示词", "生成参考图和视频片段", "拼接成 30 秒以上获客视频"],
+    input: "深度觉醒 AI 智能体 SaaS，目标客户是中小企业老板，卖点是客服自动化、知识库问答、短视频获客引流。",
+    output: "输出短视频标题、3 秒开场钩子、完整脚本、分镜、图片提示词、视频提示词和可重新生成的视频片段。",
+    value: ["最短 30 秒成片方案", "支持提示词/图片/视频分阶段重生成", "让企业卖点更像真人实拍内容"],
+    action: { label: "打开短视频生成工具", detail: "video" }
+  }
+};
+
+const bookingAgents = [
+  ...Object.keys(agents).map((key) => ({
+    key,
+    icon: agentIcons[key] || "AI",
+    name: agents[key].kicker,
+    desc: agents[key].title,
+  })),
+];
 
 const pains = {
   law: [
@@ -157,12 +254,107 @@ function renderSolution(key) {
 
 function renderAgent(key) {
   const agent = agents[key];
+  if (!agent) return;
   signalText.textContent = agent.signal;
   consoleKicker.textContent = agent.kicker;
   consoleTitle.textContent = agent.title;
   consoleCopy.textContent = agent.copy;
   consoleFlow.innerHTML = agent.flow.map((step, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b> ${step}</li>`).join("");
   document.querySelectorAll("[data-agent-key]").forEach((card) => card.classList.toggle("active", card.dataset.agentKey === key));
+}
+
+function renderAgentDemo(key) {
+  if (!agentDetailDemo) return;
+  const demo = agentDemos[key];
+  const agent = agents[key];
+  if (!demo) {
+    agentDetailDemo.innerHTML = "";
+    return;
+  }
+  const appUrl = AGENT_APP_LINKS[key] || "";
+  const actionHtml = `<div class="agent-demo-tool"><button class="btn-primary" type="button" data-agent-app="${key}">进入${agent?.kicker || "智能体"}系统</button><span>进入专属智能体工作台，体验完整业务流程。</span></div>`;
+  agentDetailDemo.innerHTML = `
+    <section class="agent-demo-summary">
+      <div>
+        <p class="eyebrow">Product Demo</p>
+        <h3>这个智能体能帮企业做什么</h3>
+        <p>${demo.role}</p>
+      </div>
+      <div class="agent-demo-value">
+        ${demo.value.map((item) => `<span>${item}</span>`).join("")}
+      </div>
+    </section>
+    <section class="agent-demo-grid">
+      <article>
+        <span>适合演示的场景</span>
+        <ul>${demo.scenarios.map((item) => `<li>${item}</li>`).join("")}</ul>
+      </article>
+      <article>
+        <span>客户怎么使用</span>
+        <ol>${demo.steps.map((item) => `<li>${item}</li>`).join("")}</ol>
+      </article>
+    </section>
+    <section class="agent-demo-example">
+      <div>
+        <span>演示输入</span>
+        <p>${demo.input}</p>
+      </div>
+      <div>
+        <span>演示输出</span>
+        <p>${demo.output}</p>
+      </div>
+    </section>
+    ${actionHtml}
+  `;
+}
+
+function renderAgentDetail(key) {
+  const agent = agents[key];
+  if (!agent) return;
+  renderAgent(key);
+  if (agentDetailTitle) agentDetailTitle.textContent = agent.kicker;
+  if (agentDetailIcon) agentDetailIcon.textContent = agentIcons[key] || "AI";
+  if (agentDetailCopy) agentDetailCopy.textContent = agent.copy;
+  if (agentDetailKicker) agentDetailKicker.textContent = agent.kicker;
+  if (agentDetailHeading) agentDetailHeading.textContent = agent.title;
+  if (agentDetailBody) agentDetailBody.textContent = agent.copy;
+  if (agentDetailFlow) {
+    agentDetailFlow.innerHTML = agent.flow.map((step, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b>${step}</li>`).join("");
+  }
+  renderAgentDemo(key);
+  if (agentDetailList) {
+    agentDetailList.querySelectorAll("button").forEach((button) => {
+      button.classList.toggle("active", button.dataset.agentDetailKey === key);
+    });
+  }
+}
+
+function renderAgentDetailList() {
+  if (!agentDetailList) return;
+  agentDetailList.innerHTML = Object.keys(agents)
+    .map((key) => `<button type="button" data-agent-detail-key="${key}">${agentIcons[key] || "AI"} ${agents[key].kicker}</button>`)
+    .join("");
+}
+
+function renderBookingAgents() {
+  if (!bookingAgentList) return;
+  bookingAgentList.innerHTML = bookingAgents
+    .map((agent) => `
+      <button class="booking-agent-option" type="button" data-booking-agent="${agent.key}">
+        <span>${agent.icon}</span>
+        <strong>${agent.name}</strong>
+        <small>${agent.desc}</small>
+      </button>
+    `)
+    .join("");
+}
+
+function setBookingAgentSelected(key, selected) {
+  if (selected) selectedBookingAgents.add(key);
+  else selectedBookingAgents.delete(key);
+  bookingAgentList?.querySelectorAll("[data-booking-agent]").forEach((button) => {
+    button.classList.toggle("active", selectedBookingAgents.has(button.dataset.bookingAgent));
+  });
 }
 
 function renderPainGrids() {
@@ -192,6 +384,16 @@ function showDetail(key) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function setMainSideRailCollapsed(collapsed) {
+  document.body.classList.toggle("agent-rail-collapsed", collapsed);
+  localStorage.setItem("agentRailCollapsed", collapsed ? "1" : "0");
+}
+
+function setWorkspaceSidebarCollapsed(sidebar, collapsed) {
+  const workspace = sidebar.closest(".video-agent-workspace");
+  workspace?.classList.toggle("sidebar-collapsed", collapsed);
+}
+
 menuButton?.addEventListener("click", () => {
   const isOpen = mobileNav.classList.toggle("is-open");
   menuButton.setAttribute("aria-expanded", String(isOpen));
@@ -203,10 +405,41 @@ document.addEventListener("click", (event) => {
     showMain(mainLink.dataset.scrollTarget);
     mobileNav?.classList.remove("is-open");
   }
+  const agentApp = event.target.closest("[data-agent-app]");
+  if (agentApp) {
+    const appKey = agentApp.dataset.agentApp;
+    const appUrl = AGENT_APP_LINKS[appKey];
+    if (appUrl) {
+      window.open(appUrl, "_blank", "noopener,noreferrer");
+    } else {
+      openModal();
+    }
+    return;
+  }
   const detail = event.target.closest("[data-detail]");
   if (detail) showDetail(detail.dataset.detail);
+  const detailAgent = event.target.closest("[data-agent-detail-key]");
+  if (detailAgent) renderAgentDetail(detailAgent.dataset.agentDetailKey);
+  const bookingAgent = event.target.closest("[data-booking-agent]");
+  if (bookingAgent) setBookingAgentSelected(bookingAgent.dataset.bookingAgent, !selectedBookingAgents.has(bookingAgent.dataset.bookingAgent));
+  const interactive = event.target.closest("button, a, input, textarea, select, label, summary, details");
+  const sideRail = event.target.closest(".side-rail");
+  if (sideRail && !interactive) {
+    setMainSideRailCollapsed(!document.body.classList.contains("agent-rail-collapsed"));
+  }
+  const workspaceSidebar = event.target.closest(".video-agent-sidebar");
+  if (workspaceSidebar && !interactive) {
+    const workspace = workspaceSidebar.closest(".video-agent-workspace");
+    setWorkspaceSidebarCollapsed(workspaceSidebar, !workspace?.classList.contains("sidebar-collapsed"));
+  }
   const agent = event.target.closest("[data-agent-key]");
-  if (agent) renderAgent(agent.dataset.agentKey);
+  if (agent) {
+    renderAgent(agent.dataset.agentKey);
+    if (agent.classList.contains("agent-card")) {
+      renderAgentDetail(agent.dataset.agentKey);
+      showDetail("agent");
+    }
+  }
   if (event.target.closest("[data-open-modal]")) openModal();
   if (event.target.closest("[data-close-modal]")) closeModal();
 });
@@ -232,7 +465,7 @@ function closeModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 
-document.querySelector("[data-submit-booking]")?.addEventListener("click", () => {
+document.querySelector("[data-submit-booking]")?.addEventListener("click", async () => {
   const company = document.querySelector("[data-field-company]").value.trim();
   const name = document.querySelector("[data-field-name]").value.trim();
   const phone = document.querySelector("[data-field-phone]").value.trim();
@@ -240,8 +473,31 @@ document.querySelector("[data-submit-booking]")?.addEventListener("click", () =>
     formError.textContent = "请填写公司名称、姓名，并输入正确的 11 位手机号。";
     return;
   }
-  modalForm.style.display = "none";
-  modalSuccess.classList.add("show");
+  const bookingRecord = {
+    company,
+    name,
+    phone,
+    agents: [...selectedBookingAgents],
+    createdAt: new Date().toISOString(),
+  };
+  formError.textContent = "";
+  try {
+    const response = await fetch(`${BOOKING_API_BASE}/api/bookings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...bookingRecord, source: "website" }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.detail || "预约提交失败");
+    }
+    localStorage.setItem("latestBookingRequest", JSON.stringify({ ...bookingRecord, booking_id: result.booking_id }));
+    modalForm.style.display = "none";
+    modalSuccess.classList.add("show");
+  } catch (error) {
+    localStorage.setItem("latestBookingRequest", JSON.stringify({ ...bookingRecord, submit_error: String(error) }));
+    formError.textContent = "后端未连接或提交失败，已临时保存在本机浏览器。请确认 FastAPI 已启动。";
+  }
 });
 
 modal?.addEventListener("click", (event) => {
@@ -319,8 +575,12 @@ if (starCanvas) {
 }
 
 renderSolution("mfg");
+renderAgentDetailList();
+renderBookingAgents();
 renderAgent("doc");
+renderAgentDetail("doc");
 renderPainGrids();
+setMainSideRailCollapsed(localStorage.getItem("agentRailCollapsed") === "1");
 
 (function initVideoAgent() {
   const form = document.querySelector("[data-video-agent-form]");
