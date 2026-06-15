@@ -16,13 +16,16 @@
       "assets/ai-avatar-strategist.png",
       "assets/ai-avatar-operator.png"
     ],
-    endpoint: "",
+    endpoint: "http://8.210.39.222/v1/chat",
+    apiKey: "",
+    sessionNamespace: "default",
+    sessionTtlMs: 30 * 60 * 1000,
     quickQuestions: ["我们有哪些智能体？", "律师适合哪个产品？", "跨境电商怎么用？", "预约演示"]
   };
 
   const config = Object.assign({}, defaults, window.AI_DIGITAL_HUMAN_CONFIG || {});
   if (!config.endpoint) {
-    config.endpoint = "http://127.0.0.1:8890/api/customer-service/chat";
+    config.endpoint = "http://8.210.39.222/v1/chat";
   }
   const avatarPool = Array.isArray(config.avatars) && config.avatars.length ? config.avatars : [config.avatar];
   const figurePool = Array.isArray(config.figures) && config.figures.length ? config.figures : [config.figure];
@@ -152,6 +155,9 @@
 
   async function getAnswer(text) {
     if (config.endpoint) {
+      if (!config.apiKey) {
+        throw new Error("AI apiKey is not configured");
+      }
       const response = await fetch(config.endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -183,11 +189,19 @@
   }
 
   function getSessionId() {
-    const key = "aiHumanSessionId";
-    let sessionId = window.localStorage.getItem(key);
-    if (!sessionId) {
-      sessionId = `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      window.localStorage.setItem(key, sessionId);
+    const key = `aiHumanSession:${config.sessionNamespace || "default"}`;
+    const now = Date.now();
+    let stored = null;
+    try {
+      stored = JSON.parse(window.localStorage.getItem(key) || "null");
+    } catch {
+      stored = null;
+    }
+    const isFresh = stored && stored.id && now - Number(stored.updatedAt || 0) < Number(config.sessionTtlMs || 0);
+    const sessionId = isFresh ? stored.id : `web-${now}-${Math.random().toString(16).slice(2)}`;
+    window.localStorage.setItem(key, JSON.stringify({ id: sessionId, updatedAt: now }));
+    if (window.localStorage.getItem("aiHumanSessionId")) {
+      window.localStorage.removeItem("aiHumanSessionId");
     }
     return sessionId;
   }

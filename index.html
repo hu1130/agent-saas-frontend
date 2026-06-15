@@ -466,6 +466,7 @@
       };
     </script>
     <script src="script.js"></script>
+    <script src="assets/ai-config.js?v=20260615-2"></script>
     <script>
       window.AI_DIGITAL_HUMAN_CONFIG = {
         brandName: "深度觉醒 AI 顾问",
@@ -478,10 +479,12 @@
           "assets/ai-avatar-strategist.png",
           "assets/ai-avatar-operator.png"
         ],
-        endpoint: "http://127.0.0.1:8890/api/customer-service/chat",
+        endpoint: window.COMPANY_AI_ENDPOINT || "http://8.210.39.222/v1/chat",
+        apiKey: window.COMPANY_AI_API_KEY || "",
+        sessionNamespace: "company-site-v2",
         quickQuestions: ["我们有哪些智能体？", "律师适合哪个产品？", "跨境电商怎么用？", "预约演示"]
       };
     </script>
-    <script src="assets/ai-widget.js"></script>
+    <script src="assets/ai-widget.js?v=20260615-2"></script>
   </body>
 </html>

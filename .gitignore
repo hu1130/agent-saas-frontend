@@ -3,3 +3,5 @@ node_modules/
 Thumbs.db
 *.log
 *.tmp
+assets/ai-config.js
+website-frontend-deploy.tar.gz
