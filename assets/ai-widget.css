@@ -548,6 +548,40 @@
   background: linear-gradient(135deg, #67e8f9, #93c5fd);
 }
 
+.ai-human-message.ai-human-typing .ai-human-message-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(248, 251, 255, 0.82);
+}
+
+.ai-human-typing-label {
+  font-size: 13px;
+}
+
+.ai-human-typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+.ai-human-typing-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(103, 232, 249, 0.74);
+  animation: aiHumanTyping 920ms ease-in-out infinite;
+}
+
+.ai-human-typing-dots i:nth-child(2) {
+  animation-delay: 130ms;
+}
+
+.ai-human-typing-dots i:nth-child(3) {
+  animation-delay: 260ms;
+}
+
 .ai-human-quick {
   display: flex;
   flex-wrap: wrap;
@@ -746,6 +780,20 @@
 
   50% {
     transform: translateY(-3px) scale(1.018);
+  }
+}
+
+@keyframes aiHumanTyping {
+  0%,
+  80%,
+  100% {
+    opacity: 0.32;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
   }
 }
 

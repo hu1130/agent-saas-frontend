@@ -160,13 +160,16 @@
     if (!text) return;
     input.value = "";
     addMessage(text, "user");
+    const typingIndicator = addTypingIndicator();
     setSpeaking(true);
     try {
       const answer = await getAnswer(text);
+      removeTypingIndicator(typingIndicator);
       await addBotAnswer(answer);
     } catch {
       addMessage("抱歉，当前智能服务暂时不可用。你也可以点击官网的“预约演示”，我们会安排顾问跟进。", "bot");
     } finally {
+      removeTypingIndicator(typingIndicator);
       setSpeaking(false);
     }
   }
@@ -271,6 +274,46 @@
     item.appendChild(bubble);
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
+  }
+
+  function addTypingIndicator() {
+    const item = document.createElement("div");
+    item.className = "ai-human-message bot ai-human-typing";
+    item.setAttribute("aria-label", "\u6b63\u5728\u8f93\u5165\u4e2d");
+
+    const avatar = document.createElement("span");
+    avatar.className = "ai-human-message-avatar";
+    const image = document.createElement("img");
+    image.src = config.avatar;
+    image.alt = "";
+    avatar.appendChild(image);
+
+    const bubble = document.createElement("span");
+    bubble.className = "ai-human-message-bubble";
+    const label = document.createElement("span");
+    label.className = "ai-human-typing-label";
+    label.textContent = "\u6b63\u5728\u8f93\u5165\u4e2d";
+    const dots = document.createElement("span");
+    dots.className = "ai-human-typing-dots";
+    dots.setAttribute("aria-hidden", "true");
+
+    for (let index = 0; index < 3; index += 1) {
+      dots.appendChild(document.createElement("i"));
+    }
+
+    bubble.appendChild(label);
+    bubble.appendChild(dots);
+    item.appendChild(avatar);
+    item.appendChild(bubble);
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+    return item;
+  }
+
+  function removeTypingIndicator(indicator) {
+    if (indicator && indicator.parentNode) {
+      indicator.parentNode.removeChild(indicator);
+    }
   }
 
   function setSpeaking(isSpeaking) {
