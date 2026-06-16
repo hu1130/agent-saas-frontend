@@ -119,6 +119,24 @@
     event.preventDefault();
     submitMessage(input.value.trim());
   });
+  messages.addEventListener("wheel", (event) => event.stopPropagation(), { passive: true });
+  let touchStartX = 0;
+  let touchStartY = 0;
+  messages.addEventListener("touchstart", (event) => {
+    const touch = event.touches[0];
+    touchStartX = touch?.clientX || 0;
+    touchStartY = touch?.clientY || 0;
+  }, { passive: true });
+  messages.addEventListener("touchmove", (event) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    const deltaX = Math.abs(touch.clientX - touchStartX);
+    const deltaY = Math.abs(touch.clientY - touchStartY);
+    if (deltaX > deltaY) {
+      event.preventDefault();
+    }
+    event.stopPropagation();
+  }, { passive: false });
 
   function openPanel() {
     widget.classList.add("is-open");
@@ -235,7 +253,22 @@
   function addMessage(text, type) {
     const item = document.createElement("div");
     item.className = `ai-human-message ${type}`;
-    item.textContent = text;
+    const avatar = document.createElement("span");
+    avatar.className = "ai-human-message-avatar";
+    if (type === "bot") {
+      const image = document.createElement("img");
+      image.src = config.avatar;
+      image.alt = "";
+      avatar.appendChild(image);
+    } else {
+      avatar.textContent = "用户";
+      avatar.setAttribute("aria-hidden", "true");
+    }
+    const bubble = document.createElement("span");
+    bubble.className = "ai-human-message-bubble";
+    bubble.textContent = text;
+    item.appendChild(avatar);
+    item.appendChild(bubble);
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
   }

@@ -519,7 +519,7 @@ h1, h2, h3, p { margin-top: 0; }
 
 .ai-human-presence-bubble,
 .ai-human-panel,
-.ai-human-message.bot,
+.ai-human-message.bot .ai-human-message-bubble,
 .ai-human-form,
 .ai-human-quick,
 .ai-human-messages {
@@ -547,9 +547,15 @@ h1, h2, h3, p { margin-top: 0; }
 .ai-human-presence-cta,
 .ai-human-launcher,
 .ai-human-send,
-.ai-human-message.user {
+.ai-human-message.user .ai-human-message-bubble,
+.ai-human-message.user .ai-human-message-avatar {
   color: #06111a;
   background: linear-gradient(135deg, var(--cyan), var(--violet));
+}
+
+.ai-human-message-avatar {
+  border-color: rgba(221, 249, 255, 0.32);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .ai-human-hero {
