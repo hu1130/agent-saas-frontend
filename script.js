@@ -28,9 +28,11 @@ const modal = document.querySelector("[data-modal]");
 const modalForm = document.querySelector("[data-modal-form]");
 const modalSuccess = document.querySelector("[data-modal-success]");
 const formError = document.querySelector("[data-form-error]");
+const formStatus = document.querySelector("[data-form-status]");
 const bookingAgentList = document.querySelector("[data-booking-agent-list]");
 const selectedBookingAgents = new Set();
-const BOOKING_API_BASE = window.BOOKING_API_BASE || window.VIDEO_AGENT_API_BASE || "http://127.0.0.1:8890";
+const BOOKING_API_BASE = window.BOOKING_API_BASE || "";
+const BOOKING_API_URL = window.BOOKING_API_URL || `${BOOKING_API_BASE}/api/bookings`;
 const AGENT_APP_LINKS = Object.assign({
   doc: "",
   risk: "",
@@ -458,6 +460,7 @@ function openModal() {
   modalForm.style.display = "block";
   modalSuccess.classList.remove("show");
   formError.textContent = "";
+  formStatus.textContent = "";
 }
 
 function closeModal() {
@@ -465,11 +468,13 @@ function closeModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 
-document.querySelector("[data-submit-booking]")?.addEventListener("click", async () => {
+document.querySelector("[data-submit-booking]")?.addEventListener("click", async (event) => {
+  const submitButton = event.currentTarget;
   const company = document.querySelector("[data-field-company]").value.trim();
   const name = document.querySelector("[data-field-name]").value.trim();
   const phone = document.querySelector("[data-field-phone]").value.trim();
   if (!company || !name || !/^1[3-9]\d{9}$/.test(phone)) {
+    formStatus.textContent = "";
     formError.textContent = "请填写公司名称、姓名，并输入正确的 11 位手机号。";
     return;
   }
@@ -481,8 +486,11 @@ document.querySelector("[data-submit-booking]")?.addEventListener("click", async
     createdAt: new Date().toISOString(),
   };
   formError.textContent = "";
+  formStatus.textContent = "正在提交预约信息，请稍候...";
+  submitButton.disabled = true;
+  submitButton.textContent = "正在提交...";
   try {
-    const response = await fetch(`${BOOKING_API_BASE}/api/bookings`, {
+    const response = await fetch(BOOKING_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...bookingRecord, source: "website" }),
@@ -491,12 +499,14 @@ document.querySelector("[data-submit-booking]")?.addEventListener("click", async
     if (!response.ok) {
       throw new Error(result.detail || "预约提交失败");
     }
-    localStorage.setItem("latestBookingRequest", JSON.stringify({ ...bookingRecord, booking_id: result.booking_id }));
     modalForm.style.display = "none";
     modalSuccess.classList.add("show");
   } catch (error) {
-    localStorage.setItem("latestBookingRequest", JSON.stringify({ ...bookingRecord, submit_error: String(error) }));
-    formError.textContent = "后端未连接或提交失败，已临时保存在本机浏览器。请确认 FastAPI 已启动。";
+    formStatus.textContent = "";
+    formError.textContent = "预约暂时没有提交成功，请稍后重试。";
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "提交预约";
   }
 });
 

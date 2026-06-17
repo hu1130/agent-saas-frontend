@@ -26,6 +26,27 @@ http://127.0.0.1:8888/api/video-agent/generate
 
 ## 官网 AI 顾问接口
 
+## 预约演示接口
+
+预约表单会提交到：
+
+```text
+POST /api/bookings
+```
+
+如果预约接口部署在阿里云独立域名，请在 `index.html` 里配置：
+
+```js
+window.BOOKING_API_BASE = "https://your-aliyun-api-domain.com";
+window.BOOKING_API_URL = "https://your-aliyun-api-domain.com/api/bookings";
+```
+
+实际请求会变成：
+
+```text
+POST https://your-aliyun-api-domain.com/api/bookings
+```
+
 页面右下角数字人顾问默认调用：
 
 ```text

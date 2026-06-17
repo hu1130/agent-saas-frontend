@@ -405,7 +405,23 @@ h1, h2, h3, p { margin-top: 0; }
 .modal label { display: grid; gap: 8px; margin: 16px 0; color: var(--muted); font-weight: 800; }
 .modal input { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.2); color: var(--text); padding: 13px 14px; outline: 0; }
 .modal input::placeholder { color: rgba(248,253,255,.7); }
-.modal small { color: var(--danger); }
+.modal small {
+  display: block;
+  margin: 10px 0 0;
+  color: #ffd6dc;
+  font-weight: 800;
+  line-height: 1.6;
+}
+.form-status {
+  min-height: 24px;
+  margin-top: 8px;
+  color: var(--cyan);
+  font-weight: 900;
+}
+.modal button:disabled {
+  cursor: wait;
+  opacity: .72;
+}
 .booking-agent-picker {
   margin: 18px 0 20px;
   border: 1px solid rgba(221,249,255,.22);
@@ -478,6 +494,13 @@ h1, h2, h3, p { margin-top: 0; }
 .modal-success { display: none; text-align: center; }
 .modal-success.show { display: block; }
 .modal-success strong { display: grid; width: 62px; height: 62px; place-items: center; margin: 0 auto 16px; border-radius: 999px; background: rgba(112,240,255,.16); color: var(--cyan); font-size: 34px; }
+.modal-success p {
+  margin: 12px auto 22px;
+  max-width: 420px;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.8;
+}
 
 @keyframes signalMove { 0%,100% { transform: translateX(0); } 50% { transform: translateX(112%); } }
 @keyframes rotateScan { to { rotate: 360deg; } }
